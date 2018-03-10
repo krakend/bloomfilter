@@ -91,6 +91,7 @@ type SerializibleBloomfilter struct {
 	M        uint
 	K        uint
 	HashName string
+	Cfg      Config
 }
 
 func (bs *Bloomfilter) MarshalBinary() ([]byte, error) {
@@ -100,26 +101,27 @@ func (bs *Bloomfilter) MarshalBinary() ([]byte, error) {
 		M:        bs.m,
 		K:        bs.k,
 		HashName: bs.cfg.HashName,
+		Cfg:      bs.cfg,
 	})
 	//zip buf.Bytes
+
 	return buf.Bytes(), err
 }
 
 func (bs *Bloomfilter) UnmarshalBinary(data []byte) error {
 	//unzip data
-
 	buf := bytes.NewBuffer(data)
 	target := SerializibleBloomfilter{}
 
 	if err := gob.NewDecoder(buf).Decode(&target); err != nil {
 		return err
 	}
-
-	bs = &Bloomfilter{
-		bs: target.BS,
-		m:  target.M,
-		k:  target.K,
-		h:  hashFactoryNames[target.HashName](target.K),
+	*bs = Bloomfilter{
+		bs:  target.BS,
+		m:   target.M,
+		k:   target.K,
+		h:   hashFactoryNames[target.HashName](target.K),
+		cfg: target.Cfg,
 	}
 
 	return nil

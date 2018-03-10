@@ -20,10 +20,12 @@ func (b *BFType) Check(elems [][]byte, checks *[]bool) error {
 		checkRes[i] = b.bf.Check(elem)
 	}
 	*checks = checkRes
+
 	return nil
 }
 
-func (b *BFType) Union(bf Bloomfilter, count *int) error {
+func (b *BFType) Union(bf *Bloomfilter, count *int) error {
 	*count = 1
+
 	return b.bf.Union(bf)
 }
