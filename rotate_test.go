@@ -27,7 +27,7 @@ func TestRotate_Union_koIncorrectType(t *testing.T) {
 	set1 := NewRotate(ctx, 5, testCfg)
 	set2 := 24
 
-	if err := set1.Union(set2); err != ErrImpossibleToTreat {
+	if _, err := set1.Union(set2); err != ErrImpossibleToTreat {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }
@@ -40,7 +40,7 @@ func TestRotate_Union_koIncompatibleN(t *testing.T) {
 	cfg := testCfg
 	cfg.N = 1
 	set2 := NewRotate(ctx, 5, cfg)
-	if err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: diferrent n values") {
+	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: diferrent n values") {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }
@@ -53,7 +53,7 @@ func TestRotate_Union_koIncompatibleP(t *testing.T) {
 	cfg := testCfg
 	cfg.P = 0.5
 	set2 := NewRotate(ctx, 5, cfg)
-	if err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: diferrent p values") {
+	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: diferrent p values") {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }
@@ -65,7 +65,7 @@ func TestRotate_Union_koIncompatibleCurrentBFs(t *testing.T) {
 	set1 := NewRotate(ctx, 5, testCfg)
 	set2 := NewRotate(ctx, 5, testCfg)
 	set2.Current.k = 111
-	if err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "!= k2(111)") {
+	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "!= k2(111)") {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }
@@ -77,7 +77,7 @@ func TestRotate_Union_koIncompatiblePreviousBFs(t *testing.T) {
 	set1 := NewRotate(ctx, 5, testCfg)
 	set2 := NewRotate(ctx, 5, testCfg)
 	set2.Previous.k = 111
-	if err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "!= k2(111)") {
+	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "!= k2(111)") {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }
@@ -89,7 +89,7 @@ func TestRotate_Union_koDifferentHashFuncsBFs(t *testing.T) {
 	set1 := NewRotate(ctx, 5, testCfg)
 	set2 := NewRotate(ctx, 5, testCfg)
 	set2.Config.HashName = "optimal"
-	if err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: different hashers") {
+	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: different hashers") {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }

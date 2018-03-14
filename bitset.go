@@ -25,12 +25,16 @@ func (bs *BitSet) Check(elem []byte) bool {
 	return bs.bs.IsSet(bs.hasher(elem)[0] % bs.bs.Len())
 }
 
-func (bs *BitSet) Union(that interface{}) error {
+func (bs *BitSet) Union(that interface{}) (float64, error) {
 	other, ok := that.(*BitSet)
 	if !ok {
-		return ErrImpossibleToTreat
+		return bs.getCount(), ErrImpossibleToTreat
 	}
 
 	bs.bs.Union(bs.bs, other.bs)
-	return nil
+	return bs.getCount(), nil
+}
+
+func (bs *BitSet) getCount() float64 {
+	return float64(bs.bs.Count()) / float64(bs.bs.Len())
 }

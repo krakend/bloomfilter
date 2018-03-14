@@ -12,7 +12,7 @@ import (
 type Set interface {
 	Add([]byte)
 	Check([]byte) bool
-	Union(interface{}) error
+	Union(interface{}) (float64, error)
 }
 
 type Config struct {
@@ -68,22 +68,23 @@ func (b Bloomfilter) Check(elem []byte) bool {
 	return true
 }
 
-func (b *Bloomfilter) Union(that interface{}) error {
+func (b *Bloomfilter) Union(that interface{}) (float64, error) {
 	other, ok := that.(*Bloomfilter)
 	if !ok {
-		return ErrImpossibleToTreat
+		return b.getCount(), ErrImpossibleToTreat
 	}
 
 	if b.m != other.m {
-		return fmt.Errorf("m1(%d) != m2(%d)", b.m, other.m)
+		return b.getCount(), fmt.Errorf("m1(%d) != m2(%d)", b.m, other.m)
 	}
 
 	if b.k != other.k {
-		return fmt.Errorf("k1(%d) != k2(%d)", b.k, other.k)
+		return b.getCount(), fmt.Errorf("k1(%d) != k2(%d)", b.k, other.k)
 	}
 
 	b.bs.Union(b.bs, other.bs)
-	return nil
+
+	return b.getCount(), nil
 }
 
 type SerializibleBloomfilter struct {
@@ -125,4 +126,8 @@ func (bs *Bloomfilter) UnmarshalBinary(data []byte) error {
 	}
 
 	return nil
+}
+
+func (bs *Bloomfilter) getCount() float64 {
+	return float64(bs.bs.Count()) / float64(bs.bs.Len())
 }

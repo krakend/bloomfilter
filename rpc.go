@@ -24,8 +24,9 @@ func (b *BFType) Check(elems [][]byte, checks *[]bool) error {
 	return nil
 }
 
-func (b *BFType) Union(bf *Bloomfilter, count *int) error {
-	*count = 1
+func (b *BFType) Union(bf *Bloomfilter, count *float64) error {
+	var err error
+	*count, err = b.bf.Union(bf)
 
-	return b.bf.Union(bf)
+	return err
 }

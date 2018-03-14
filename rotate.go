@@ -57,20 +57,20 @@ func (bs *Rotate) Check(elem []byte) bool {
 	return bs.Previous.Check(elem) || bs.Current.Check(elem)
 }
 
-func (bs *Rotate) Union(that interface{}) error {
+func (bs *Rotate) Union(that interface{}) (float64, error) {
 	bs.mutex.RLock()
 	defer bs.mutex.RUnlock()
 
 	other, ok := that.(*Rotate)
 	if !ok {
-		return ErrImpossibleToTreat
+		return bs.getCount(), ErrImpossibleToTreat
 	}
 	if other.Config.N != bs.Config.N {
-		return fmt.Errorf("error: diferrent n values %d vs. %d", other.Config.N, bs.Config.N)
+		return bs.getCount(), fmt.Errorf("error: diferrent n values %d vs. %d", other.Config.N, bs.Config.N)
 	}
 
 	if other.Config.P != bs.Config.P {
-		return fmt.Errorf("error: diferrent p values %.2f vs. %.2f", other.Config.P, bs.Config.P)
+		return bs.getCount(), fmt.Errorf("error: diferrent p values %.2f vs. %.2f", other.Config.P, bs.Config.P)
 	}
 
 	hf0 := hashFactoryNames[bs.Config.HashName](bs.Next.k)
@@ -79,19 +79,23 @@ func (bs *Rotate) Union(that interface{}) error {
 	rand.Read(subject)
 	for i, f := range hf0 {
 		if !reflect.DeepEqual(f(subject), hf1[i](subject)) {
-			return errors.New("error: different hashers")
+			return bs.getCount(), errors.New("error: different hashers")
 		}
 	}
 
-	if err := bs.Previous.Union(other.Previous); err != nil {
-		return err
+	if _, err := bs.Previous.Union(other.Previous); err != nil {
+		return bs.getCount(), err
 	}
 
-	if err := bs.Current.Union(other.Current); err != nil {
-		return err
+	if _, err := bs.Current.Union(other.Current); err != nil {
+		return bs.getCount(), err
 	}
 
-	return bs.Next.Union(other.Next)
+	if _, err := bs.Current.Union(other.Next); err != nil {
+		return bs.getCount(), err
+	}
+
+	return bs.getCount(), nil
 }
 
 func (bs *Rotate) keepRotating(ctx context.Context, c <-chan time.Time) {
@@ -175,4 +179,8 @@ func (bs *Rotate) UnmarshalBinary(data []byte) error {
 	go bs.keepRotating(localCtx, time.NewTicker(time.Duration(bs.TTL)*time.Second).C)
 
 	return nil
+}
+
+func (bs *Rotate) getCount() float64 {
+	return bs.Previous.getCount() + bs.Current.getCount() + bs.Next.getCount()
 }

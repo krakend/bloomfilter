@@ -17,7 +17,7 @@ func TestBitSet_Union_ko(t *testing.T) {
 	set1 := NewBitSet(24)
 	set2 := 24
 
-	if err := set1.Union(set2); err != ErrImpossibleToTreat {
+	if _, err := set1.Union(set2); err != ErrImpossibleToTreat {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }

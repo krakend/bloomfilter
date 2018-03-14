@@ -28,7 +28,7 @@ func TestBloomfilter_Union_koIncorrectType(t *testing.T) {
 	set1 := NewBloomfilter(testCfg)
 	set2 := 24
 
-	if err := set1.Union(set2); err != ErrImpossibleToTreat {
+	if _, err := set1.Union(set2); err != ErrImpossibleToTreat {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }
@@ -37,7 +37,7 @@ func TestBloomfilter_Union_koDifferentM(t *testing.T) {
 	set1 := NewBloomfilter(testCfg)
 	set2 := NewBloomfilter(testCfg)
 	set2.m = 111
-	if err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "!= m2(111)") {
+	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "!= m2(111)") {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }
@@ -46,7 +46,7 @@ func TestBloomfilter_Union_koDifferentK(t *testing.T) {
 	set1 := NewBloomfilter(testCfg)
 	set2 := NewBloomfilter(testCfg)
 	set2.k = 111
-	if err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "!= k2(111)") {
+	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "!= k2(111)") {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }
@@ -109,7 +109,7 @@ func callSet_Union(t *testing.T, set1, set2 Set) {
 		return
 	}
 
-	if err := set2.Union(set1); err != nil {
+	if _, err := set2.Union(set1); err != nil {
 		t.Error("failed union set1 to set2", err.Error())
 		return
 	}

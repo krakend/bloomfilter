@@ -23,13 +23,14 @@ func TestBFType_ok(t *testing.T) {
 	}
 
 	var (
-		counter int
-		elems1  = [][]byte{[]byte("elem1"), []byte("elem2")}
-		elems2  = [][]byte{[]byte("house")}
-		elems3  = [][]byte{[]byte("house"), []byte("mouse")}
+		counterFloat float64
+		counterInt   int
+		elems1       = [][]byte{[]byte("elem1"), []byte("elem2")}
+		elems2       = [][]byte{[]byte("house")}
+		elems3       = [][]byte{[]byte("house"), []byte("mouse")}
 	)
 
-	err = client.Call("BFType.Add", elems1, &counter)
+	err = client.Call("BFType.Add", elems1, &counterInt)
 	if err != nil {
 		t.Errorf("unexpected error: %s", err.Error())
 	}
@@ -55,7 +56,7 @@ func TestBFType_ok(t *testing.T) {
 	var b = NewBloomfilter(testCfg)
 	b.Add([]byte("house"))
 
-	err = client.Call("BFType.Union", b, &counter)
+	err = client.Call("BFType.Union", b, &counterFloat)
 	if err != nil {
 		t.Errorf("unexpected error: %s", err.Error())
 	}
@@ -71,7 +72,7 @@ func TestBFType_ok(t *testing.T) {
 	var b2 = NewBloomfilter(testCfg)
 	b2.Add([]byte("mouse"))
 
-	divCall = client.Go("BFType.Union", b2, &counter, nil)
+	divCall = client.Go("BFType.Union", b2, &counterFloat, nil)
 	<-divCall.Done
 
 	checks[0] = false
