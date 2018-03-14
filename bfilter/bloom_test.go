@@ -1,4 +1,4 @@
-package bloomfilter
+package filter
 
 import (
 	"bytes"

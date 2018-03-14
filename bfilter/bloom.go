@@ -1,25 +1,12 @@
-package bloomfilter
+package filter
 
 import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
-	"math"
 
 	"github.com/tmthrgd/go-bitset"
 )
-
-type Set interface {
-	Add([]byte)
-	Check([]byte) bool
-	Union(interface{}) (float64, error)
-}
-
-type Config struct {
-	N        uint
-	P        float64
-	HashName string
-}
 
 type Bloomfilter struct {
 	bs  bitset.Bitset
@@ -27,14 +14,6 @@ type Bloomfilter struct {
 	k   uint
 	h   []Hash
 	cfg Config
-}
-
-func M(n uint, p float64) uint {
-	return uint(math.Ceil(-(float64(n) * math.Log(p)) / math.Log(math.Pow(2.0, math.Log(2.0)))))
-}
-
-func K(m, n uint) uint {
-	return uint(math.Ceil(math.Log(2.0) * float64(m) / float64(n)))
 }
 
 func NewBloomfilter(cfg Config) *Bloomfilter {
@@ -71,20 +50,20 @@ func (b Bloomfilter) Check(elem []byte) bool {
 func (b *Bloomfilter) Union(that interface{}) (float64, error) {
 	other, ok := that.(*Bloomfilter)
 	if !ok {
-		return b.getCount(), ErrImpossibleToTreat
+		return b.capacity(), ErrImpossibleToTreat
 	}
 
 	if b.m != other.m {
-		return b.getCount(), fmt.Errorf("m1(%d) != m2(%d)", b.m, other.m)
+		return b.capacity(), fmt.Errorf("m1(%d) != m2(%d)", b.m, other.m)
 	}
 
 	if b.k != other.k {
-		return b.getCount(), fmt.Errorf("k1(%d) != k2(%d)", b.k, other.k)
+		return b.capacity(), fmt.Errorf("k1(%d) != k2(%d)", b.k, other.k)
 	}
 
 	b.bs.Union(b.bs, other.bs)
 
-	return b.getCount(), nil
+	return b.capacity(), nil
 }
 
 type SerializibleBloomfilter struct {
@@ -128,6 +107,6 @@ func (bs *Bloomfilter) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func (bs *Bloomfilter) getCount() float64 {
-	return float64(bs.bs.Count()) / float64(bs.bs.Len())
+func (bs *Bloomfilter) capacity() float64 {
+	return float64(bs.bs.Count()) / float64(bs.m)
 }

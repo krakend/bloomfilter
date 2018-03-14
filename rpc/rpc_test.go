@@ -1,4 +1,4 @@
-package bloomfilter
+package rpc
 
 import (
 	"net"

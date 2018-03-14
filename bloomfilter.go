@@ -1,0 +1,23 @@
+package bloomfilter
+
+import "math"
+
+type Set interface {
+	Add([]byte)
+	Check([]byte) bool
+	Union(interface{}) (float64, error)
+}
+
+type Config struct {
+	N        uint
+	P        float64
+	HashName string
+}
+
+func M(n uint, p float64) uint {
+	return uint(math.Ceil(-(float64(n) * math.Log(p)) / math.Log(math.Pow(2.0, math.Log(2.0)))))
+}
+
+func K(m, n uint) uint {
+	return uint(math.Ceil(math.Log(2.0) * float64(m) / float64(n)))
+}

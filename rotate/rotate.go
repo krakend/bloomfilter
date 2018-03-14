@@ -1,4 +1,4 @@
-package bloomfilter
+package rotate
 
 import (
 	"bytes"
@@ -63,14 +63,14 @@ func (bs *Rotate) Union(that interface{}) (float64, error) {
 
 	other, ok := that.(*Rotate)
 	if !ok {
-		return bs.getCount(), ErrImpossibleToTreat
+		return bs.capacity(), ErrImpossibleToTreat
 	}
 	if other.Config.N != bs.Config.N {
-		return bs.getCount(), fmt.Errorf("error: diferrent n values %d vs. %d", other.Config.N, bs.Config.N)
+		return bs.capacity(), fmt.Errorf("error: diferrent n values %d vs. %d", other.Config.N, bs.Config.N)
 	}
 
 	if other.Config.P != bs.Config.P {
-		return bs.getCount(), fmt.Errorf("error: diferrent p values %.2f vs. %.2f", other.Config.P, bs.Config.P)
+		return bs.capacity(), fmt.Errorf("error: diferrent p values %.2f vs. %.2f", other.Config.P, bs.Config.P)
 	}
 
 	hf0 := hashFactoryNames[bs.Config.HashName](bs.Next.k)
@@ -79,23 +79,23 @@ func (bs *Rotate) Union(that interface{}) (float64, error) {
 	rand.Read(subject)
 	for i, f := range hf0 {
 		if !reflect.DeepEqual(f(subject), hf1[i](subject)) {
-			return bs.getCount(), errors.New("error: different hashers")
+			return bs.capacity(), errors.New("error: different hashers")
 		}
 	}
 
 	if _, err := bs.Previous.Union(other.Previous); err != nil {
-		return bs.getCount(), err
+		return bs.capacity(), err
 	}
 
 	if _, err := bs.Current.Union(other.Current); err != nil {
-		return bs.getCount(), err
+		return bs.capacity(), err
 	}
 
 	if _, err := bs.Current.Union(other.Next); err != nil {
-		return bs.getCount(), err
+		return bs.capacity(), err
 	}
 
-	return bs.getCount(), nil
+	return bs.capacity(), nil
 }
 
 func (bs *Rotate) keepRotating(ctx context.Context, c <-chan time.Time) {
@@ -181,6 +181,6 @@ func (bs *Rotate) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func (bs *Rotate) getCount() float64 {
-	return bs.Previous.getCount() + bs.Current.getCount() + bs.Next.getCount()
+func (bs *Rotate) capacity() float64 {
+	return (bs.Previous.capacity() + bs.Current.capacity() + bs.Next.capacity()) / 3.0
 }
