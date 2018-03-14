@@ -1,4 +1,4 @@
-package filter
+package bfilter
 
 import (
 	"bytes"
@@ -14,14 +14,14 @@ var testCfg = Config{
 }
 
 func TestBloomfilter(t *testing.T) {
-	callSet(t, NewBloomfilter(testCfg))
+	bloomfilter.callSet(t, NewBloomfilter(testCfg))
 }
 
 func TestBloomfilter_Union_ok(t *testing.T) {
 	set1 := NewBloomfilter(testCfg)
 	set2 := NewBloomfilter(testCfg)
 
-	callSet_Union(t, set1, set2)
+	bloomfilter.callSetUnion(t, set1, set2)
 }
 
 func TestBloomfilter_Union_koIncorrectType(t *testing.T) {
@@ -48,17 +48,6 @@ func TestBloomfilter_Union_koDifferentK(t *testing.T) {
 	set2.k = 111
 	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "!= k2(111)") {
 		t.Errorf("Unexpected error, %v", err)
-	}
-}
-
-func callSet(t *testing.T, set Set) {
-	set.Add([]byte{1, 2, 3})
-	if !set.Check([]byte{1, 2, 3}) {
-		t.Error("failed check")
-	}
-
-	if set.Check([]byte{1, 2, 4}) {
-		t.Error("unexpected check")
 	}
 }
 
@@ -93,29 +82,5 @@ func TestUnmarshalBinary_ko(t *testing.T) {
 	set1 := NewBloomfilter(testCfg)
 	if err := set1.UnmarshalBinary([]byte{}); err == nil {
 		t.Error("should have given error")
-	}
-}
-
-func callSet_Union(t *testing.T, set1, set2 Set) {
-	elem := []byte{1, 2, 3}
-	set1.Add(elem)
-	if !set1.Check(elem) {
-		t.Error("failed add set1 before union")
-		return
-	}
-
-	if set2.Check(elem) {
-		t.Error("unexpected check to union of set2")
-		return
-	}
-
-	if _, err := set2.Union(set1); err != nil {
-		t.Error("failed union set1 to set2", err.Error())
-		return
-	}
-
-	if !set2.Check(elem) {
-		t.Error("failed union check of set1 to set2")
-		return
 	}
 }

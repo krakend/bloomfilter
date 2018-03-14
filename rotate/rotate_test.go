@@ -17,7 +17,7 @@ func TestRotate_Union_ok(t *testing.T) {
 	set1 := NewRotate(ctx, 5, testCfg)
 	set2 := NewRotate(ctx, 5, testCfg)
 
-	callSet_Union(t, set1, set2)
+	bloomfilter.callSetUnion(t, set1, set2)
 }
 
 func TestRotate_Union_koIncorrectType(t *testing.T) {

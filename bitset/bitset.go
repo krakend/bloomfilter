@@ -3,6 +3,7 @@ package bitset
 import (
 	"fmt"
 
+	bloomfilter "github.com/letgoapp/go-bloomfilter"
 	"github.com/tmthrgd/go-bitset"
 )
 
@@ -10,11 +11,11 @@ var ErrImpossibleToTreat = fmt.Errorf("unable to union")
 
 type BitSet struct {
 	bs     bitset.Bitset
-	hasher Hash
+	hasher bloomfilter.Hash
 }
 
 func NewBitSet(m uint) *BitSet {
-	return &BitSet{bitset.New(m), MD5}
+	return &BitSet{bitset.New(m), bloomfilter.MD5}
 }
 
 func (bs *BitSet) Add(elem []byte) {

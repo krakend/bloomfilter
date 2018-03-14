@@ -34,7 +34,7 @@ func NewRotate(ctx context.Context, TTL uint, cfg Config) *Rotate {
 }
 
 type Rotate struct {
-	Previous, Current, Next *Bloomfilter
+	Previous, Current, Next *bfilter.Bloomfilter
 	TTL                     uint
 	Config                  Config
 	mutex                   *sync.RWMutex

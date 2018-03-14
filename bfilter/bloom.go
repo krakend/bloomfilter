@@ -1,10 +1,11 @@
-package filter
+package bfilter
 
 import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
 
+	bloomfilter "github.com/letgoapp/go-bloomfilter"
 	"github.com/tmthrgd/go-bitset"
 )
 
@@ -12,8 +13,8 @@ type Bloomfilter struct {
 	bs  bitset.Bitset
 	m   uint
 	k   uint
-	h   []Hash
-	cfg Config
+	h   []bloomfilter.Hash
+	cfg bloomfilter.Config
 }
 
 func NewBloomfilter(cfg Config) *Bloomfilter {
