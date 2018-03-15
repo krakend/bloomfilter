@@ -5,37 +5,34 @@ import (
 	"encoding/gob"
 	"strings"
 	"testing"
+
+	"github.com/letgoapp/go-bloomfilter"
+	"github.com/letgoapp/go-bloomfilter/testutils"
 )
 
-var testCfg = Config{
-	N:        100,
-	P:        0.001,
-	HashName: "default",
-}
-
 func TestBloomfilter(t *testing.T) {
-	bloomfilter.callSet(t, NewBloomfilter(testCfg))
+	testutils.CallSet(t, New(testutils.TestCfg))
 }
 
 func TestBloomfilter_Union_ok(t *testing.T) {
-	set1 := NewBloomfilter(testCfg)
-	set2 := NewBloomfilter(testCfg)
+	set1 := New(testutils.TestCfg)
+	set2 := New(testutils.TestCfg)
 
-	bloomfilter.callSetUnion(t, set1, set2)
+	testutils.CallSetUnion(t, set1, set2)
 }
 
 func TestBloomfilter_Union_koIncorrectType(t *testing.T) {
-	set1 := NewBloomfilter(testCfg)
+	set1 := New(testutils.TestCfg)
 	set2 := 24
 
-	if _, err := set1.Union(set2); err != ErrImpossibleToTreat {
+	if _, err := set1.Union(set2); err != bloomfilter.ErrImpossibleToTreat {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }
 
 func TestBloomfilter_Union_koDifferentM(t *testing.T) {
-	set1 := NewBloomfilter(testCfg)
-	set2 := NewBloomfilter(testCfg)
+	set1 := New(testutils.TestCfg)
+	set2 := New(testutils.TestCfg)
 	set2.m = 111
 	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "!= m2(111)") {
 		t.Errorf("Unexpected error, %v", err)
@@ -43,8 +40,8 @@ func TestBloomfilter_Union_koDifferentM(t *testing.T) {
 }
 
 func TestBloomfilter_Union_koDifferentK(t *testing.T) {
-	set1 := NewBloomfilter(testCfg)
-	set2 := NewBloomfilter(testCfg)
+	set1 := New(testutils.TestCfg)
+	set2 := New(testutils.TestCfg)
 	set2.k = 111
 	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "!= k2(111)") {
 		t.Errorf("Unexpected error, %v", err)
@@ -52,7 +49,7 @@ func TestBloomfilter_Union_koDifferentK(t *testing.T) {
 }
 
 func TestBloomfilter_gobEncoder(t *testing.T) {
-	bf1 := NewBloomfilter(testCfg)
+	bf1 := New(testutils.TestCfg)
 	bf1.Add([]byte("casa"))
 	bf1.Add([]byte("grrrrr"))
 	bf1.Add([]byte("something"))
@@ -79,7 +76,7 @@ func TestBloomfilter_gobEncoder(t *testing.T) {
 }
 
 func TestUnmarshalBinary_ko(t *testing.T) {
-	set1 := NewBloomfilter(testCfg)
+	set1 := New(testutils.TestCfg)
 	if err := set1.UnmarshalBinary([]byte{}); err == nil {
 		t.Error("should have given error")
 	}

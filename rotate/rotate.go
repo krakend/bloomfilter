@@ -10,17 +10,20 @@ import (
 	"reflect"
 	"sync"
 	"time"
+
+	"github.com/letgoapp/go-bloomfilter"
+	"github.com/letgoapp/go-bloomfilter/bfilter"
 )
 
-func NewRotate(ctx context.Context, TTL uint, cfg Config) *Rotate {
+func New(ctx context.Context, TTL uint, cfg bloomfilter.Config) *Bloomfilter {
 	localCtx, cancel := context.WithCancel(ctx)
-	r := &Rotate{
-		Previous: NewBloomfilter(Config{
+	r := &Bloomfilter{
+		Previous: bfilter.New(bloomfilter.Config{
 			N:        2,
 			P:        .5,
 			HashName: cfg.HashName}),
-		Current: NewBloomfilter(cfg),
-		Next:    NewBloomfilter(cfg),
+		Current: bfilter.New(cfg),
+		Next:    bfilter.New(cfg),
 		Config:  cfg,
 		TTL:     TTL,
 
@@ -33,16 +36,22 @@ func NewRotate(ctx context.Context, TTL uint, cfg Config) *Rotate {
 	return r
 }
 
-type Rotate struct {
+type Bloomfilter struct {
 	Previous, Current, Next *bfilter.Bloomfilter
 	TTL                     uint
-	Config                  Config
+	Config                  bloomfilter.Config
 	mutex                   *sync.RWMutex
 	ctx                     context.Context
 	cancel                  context.CancelFunc
 }
 
-func (bs *Rotate) Add(elem []byte) {
+func (bs *Bloomfilter) Close() {
+	if bs != nil && bs.cancel != nil {
+		bs.cancel()
+	}
+}
+
+func (bs *Bloomfilter) Add(elem []byte) {
 	bs.mutex.RLock()
 	defer bs.mutex.RUnlock()
 
@@ -50,20 +59,20 @@ func (bs *Rotate) Add(elem []byte) {
 	bs.Current.Add(elem)
 }
 
-func (bs *Rotate) Check(elem []byte) bool {
+func (bs *Bloomfilter) Check(elem []byte) bool {
 	bs.mutex.RLock()
 	defer bs.mutex.RUnlock()
 
 	return bs.Previous.Check(elem) || bs.Current.Check(elem)
 }
 
-func (bs *Rotate) Union(that interface{}) (float64, error) {
+func (bs *Bloomfilter) Union(that interface{}) (float64, error) {
 	bs.mutex.RLock()
 	defer bs.mutex.RUnlock()
 
-	other, ok := that.(*Rotate)
+	other, ok := that.(*Bloomfilter)
 	if !ok {
-		return bs.capacity(), ErrImpossibleToTreat
+		return bs.capacity(), bloomfilter.ErrImpossibleToTreat
 	}
 	if other.Config.N != bs.Config.N {
 		return bs.capacity(), fmt.Errorf("error: diferrent n values %d vs. %d", other.Config.N, bs.Config.N)
@@ -73,8 +82,8 @@ func (bs *Rotate) Union(that interface{}) (float64, error) {
 		return bs.capacity(), fmt.Errorf("error: diferrent p values %.2f vs. %.2f", other.Config.P, bs.Config.P)
 	}
 
-	hf0 := hashFactoryNames[bs.Config.HashName](bs.Next.k)
-	hf1 := hashFactoryNames[other.Config.HashName](bs.Next.k)
+	hf0 := bs.Next.HashFactoryNameK(bs.Config.HashName)
+	hf1 := bs.Next.HashFactoryNameK(other.Config.HashName)
 	subject := make([]byte, 1000)
 	rand.Read(subject)
 	for i, f := range hf0 {
@@ -98,7 +107,7 @@ func (bs *Rotate) Union(that interface{}) (float64, error) {
 	return bs.capacity(), nil
 }
 
-func (bs *Rotate) keepRotating(ctx context.Context, c <-chan time.Time) {
+func (bs *Bloomfilter) keepRotating(ctx context.Context, c <-chan time.Time) {
 	for {
 		select {
 		case <-c:
@@ -110,7 +119,7 @@ func (bs *Rotate) keepRotating(ctx context.Context, c <-chan time.Time) {
 
 		bs.Previous = bs.Current
 		bs.Current = bs.Next
-		bs.Next = NewBloomfilter(Config{
+		bs.Next = bfilter.New(bloomfilter.Config{
 			N:        bs.Config.N,
 			P:        bs.Config.P,
 			HashName: bs.Config.HashName,
@@ -120,18 +129,18 @@ func (bs *Rotate) keepRotating(ctx context.Context, c <-chan time.Time) {
 	}
 }
 
-type SerializibleRotate struct {
-	Previous, Current, Next *Bloomfilter
-	Config                  Config
+type SerializibleBloomfilter struct {
+	Previous, Current, Next *bfilter.Bloomfilter
+	Config                  bloomfilter.Config
 	TTL                     uint
 }
 
-func (bs *Rotate) MarshalBinary() ([]byte, error) {
+func (bs *Bloomfilter) MarshalBinary() ([]byte, error) {
 	bs.mutex.RLock()
 	defer bs.mutex.RUnlock()
 
 	buf := new(bytes.Buffer)
-	err := gob.NewEncoder(buf).Encode(SerializibleRotate{
+	err := gob.NewEncoder(buf).Encode(SerializibleBloomfilter{
 		Previous: bs.Previous,
 		Next:     bs.Next,
 		Current:  bs.Current,
@@ -142,7 +151,7 @@ func (bs *Rotate) MarshalBinary() ([]byte, error) {
 	return buf.Bytes(), err
 }
 
-func (bs *Rotate) UnmarshalBinary(data []byte) error {
+func (bs *Bloomfilter) UnmarshalBinary(data []byte) error {
 	if bs != nil && bs.cancel != nil {
 		bs.cancel()
 
@@ -152,7 +161,7 @@ func (bs *Rotate) UnmarshalBinary(data []byte) error {
 	//unzip data
 
 	buf := bytes.NewBuffer(data)
-	target := &SerializibleRotate{}
+	target := &SerializibleBloomfilter{}
 
 	if err := gob.NewDecoder(buf).Decode(target); err != nil {
 		return err
@@ -165,7 +174,7 @@ func (bs *Rotate) UnmarshalBinary(data []byte) error {
 
 	localCtx, cancel := context.WithCancel(ctx)
 
-	*bs = Rotate{
+	*bs = Bloomfilter{
 		Previous: target.Previous,
 		Next:     target.Next,
 		Current:  target.Current,
@@ -181,6 +190,6 @@ func (bs *Rotate) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func (bs *Rotate) capacity() float64 {
-	return (bs.Previous.capacity() + bs.Current.capacity() + bs.Next.capacity()) / 3.0
+func (bs *Bloomfilter) capacity() float64 {
+	return (bs.Previous.Capacity() + bs.Current.Capacity() + bs.Next.Capacity()) / 3.0
 }

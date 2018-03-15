@@ -5,7 +5,7 @@ import (
 	"encoding/gob"
 	"fmt"
 
-	bloomfilter "github.com/letgoapp/go-bloomfilter"
+	"github.com/letgoapp/go-bloomfilter"
 	"github.com/tmthrgd/go-bitset"
 )
 
@@ -17,13 +17,13 @@ type Bloomfilter struct {
 	cfg bloomfilter.Config
 }
 
-func NewBloomfilter(cfg Config) *Bloomfilter {
-	m := M(cfg.N, cfg.P)
-	k := K(m, cfg.N)
+func New(cfg bloomfilter.Config) *Bloomfilter {
+	m := bloomfilter.M(cfg.N, cfg.P)
+	k := bloomfilter.K(m, cfg.N)
 	return &Bloomfilter{
 		m:   m,
 		k:   k,
-		h:   hashFactoryNames[cfg.HashName](k),
+		h:   bloomfilter.HashFactoryNames[cfg.HashName](k),
 		bs:  bitset.New(m),
 		cfg: cfg,
 	}
@@ -51,20 +51,20 @@ func (b Bloomfilter) Check(elem []byte) bool {
 func (b *Bloomfilter) Union(that interface{}) (float64, error) {
 	other, ok := that.(*Bloomfilter)
 	if !ok {
-		return b.capacity(), ErrImpossibleToTreat
+		return b.Capacity(), bloomfilter.ErrImpossibleToTreat
 	}
 
 	if b.m != other.m {
-		return b.capacity(), fmt.Errorf("m1(%d) != m2(%d)", b.m, other.m)
+		return b.Capacity(), fmt.Errorf("m1(%d) != m2(%d)", b.m, other.m)
 	}
 
 	if b.k != other.k {
-		return b.capacity(), fmt.Errorf("k1(%d) != k2(%d)", b.k, other.k)
+		return b.Capacity(), fmt.Errorf("k1(%d) != k2(%d)", b.k, other.k)
 	}
 
 	b.bs.Union(b.bs, other.bs)
 
-	return b.capacity(), nil
+	return b.Capacity(), nil
 }
 
 type SerializibleBloomfilter struct {
@@ -72,7 +72,7 @@ type SerializibleBloomfilter struct {
 	M        uint
 	K        uint
 	HashName string
-	Cfg      Config
+	Cfg      bloomfilter.Config
 }
 
 func (bs *Bloomfilter) MarshalBinary() ([]byte, error) {
@@ -101,13 +101,17 @@ func (bs *Bloomfilter) UnmarshalBinary(data []byte) error {
 		bs:  target.BS,
 		m:   target.M,
 		k:   target.K,
-		h:   hashFactoryNames[target.HashName](target.K),
+		h:   bloomfilter.HashFactoryNames[target.HashName](target.K),
 		cfg: target.Cfg,
 	}
 
 	return nil
 }
 
-func (bs *Bloomfilter) capacity() float64 {
+func (bs *Bloomfilter) Capacity() float64 {
 	return float64(bs.bs.Count()) / float64(bs.m)
+}
+
+func (bs *Bloomfilter) HashFactoryNameK(hashName string) []bloomfilter.Hash {
+	return bloomfilter.HashFactoryNames[hashName](bs.k)
 }

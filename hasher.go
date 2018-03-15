@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"crypto/sha1"
 	"encoding/binary"
+	"fmt"
 	"hash"
 	"hash/crc64"
 	"hash/fnv"
@@ -12,18 +13,28 @@ import (
 type Hash func([]byte) []uint
 type HashFactory func(uint) []Hash
 
-var defaultHashers = []Hash{
-	MD5,
-	CRC64,
-	SHA1,
-	FNV64,
-	FNV128,
-}
+var (
+	defaultHashers = []Hash{
+		MD5,
+		CRC64,
+		SHA1,
+		FNV64,
+		FNV128,
+	}
 
-var hashFactoryNames = map[string]HashFactory{
-	"default": DefaultHashFactory,
-	"optimal": OptimalHashFactory,
-}
+	HashFactoryNames = map[string]HashFactory{
+		"default": DefaultHashFactory,
+		"optimal": OptimalHashFactory,
+	}
+
+	ErrImpossibleToTreat = fmt.Errorf("unable to union")
+
+	MD5    = HashWrapper(md5.New())
+	SHA1   = HashWrapper(sha1.New())
+	CRC64  = HashWrapper(crc64.New(crc64.MakeTable(crc64.ECMA)))
+	FNV64  = HashWrapper(fnv.New64())
+	FNV128 = HashWrapper(fnv.New128())
+)
 
 func DefaultHashFactory(k uint) []Hash {
 	if k > uint(len(defaultHashers)) {
@@ -58,11 +69,3 @@ func HashWrapper(h hash.Hash) Hash {
 		return out
 	}
 }
-
-var (
-	MD5    = HashWrapper(md5.New())
-	SHA1   = HashWrapper(sha1.New())
-	CRC64  = HashWrapper(crc64.New(crc64.MakeTable(crc64.ECMA)))
-	FNV64  = HashWrapper(fnv.New64())
-	FNV128 = HashWrapper(fnv.New128())
-)

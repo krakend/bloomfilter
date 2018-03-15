@@ -1,13 +1,9 @@
 package bitset
 
 import (
-	"fmt"
-
-	bloomfilter "github.com/letgoapp/go-bloomfilter"
+	"github.com/letgoapp/go-bloomfilter"
 	"github.com/tmthrgd/go-bitset"
 )
-
-var ErrImpossibleToTreat = fmt.Errorf("unable to union")
 
 type BitSet struct {
 	bs     bitset.Bitset
@@ -29,7 +25,7 @@ func (bs *BitSet) Check(elem []byte) bool {
 func (bs *BitSet) Union(that interface{}) (float64, error) {
 	other, ok := that.(*BitSet)
 	if !ok {
-		return bs.getCount(), ErrImpossibleToTreat
+		return bs.getCount(), bloomfilter.ErrImpossibleToTreat
 	}
 
 	bs.bs.Union(bs.bs, other.bs)

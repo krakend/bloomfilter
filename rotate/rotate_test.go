@@ -8,26 +8,30 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/letgoapp/go-bloomfilter"
+	"github.com/letgoapp/go-bloomfilter/bfilter"
+	"github.com/letgoapp/go-bloomfilter/testutils"
 )
 
 func TestRotate_Union_ok(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := NewRotate(ctx, 5, testCfg)
-	set2 := NewRotate(ctx, 5, testCfg)
+	set1 := New(ctx, 5, testutils.TestCfg)
+	set2 := New(ctx, 5, testutils.TestCfg)
 
-	bloomfilter.callSetUnion(t, set1, set2)
+	testutils.CallSetUnion(t, set1, set2)
 }
 
 func TestRotate_Union_koIncorrectType(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := NewRotate(ctx, 5, testCfg)
+	set1 := New(ctx, 5, testutils.TestCfg)
 	set2 := 24
 
-	if _, err := set1.Union(set2); err != ErrImpossibleToTreat {
+	if _, err := set1.Union(set2); err != bloomfilter.ErrImpossibleToTreat {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }
@@ -36,10 +40,10 @@ func TestRotate_Union_koIncompatibleN(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := NewRotate(ctx, 5, testCfg)
-	cfg := testCfg
+	set1 := New(ctx, 5, testutils.TestCfg)
+	cfg := testutils.TestCfg
 	cfg.N = 1
-	set2 := NewRotate(ctx, 5, cfg)
+	set2 := New(ctx, 5, cfg)
 	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: diferrent n values") {
 		t.Errorf("Unexpected error, %v", err)
 	}
@@ -49,10 +53,10 @@ func TestRotate_Union_koIncompatibleP(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := NewRotate(ctx, 5, testCfg)
-	cfg := testCfg
+	set1 := New(ctx, 5, testutils.TestCfg)
+	cfg := testutils.TestCfg
 	cfg.P = 0.5
-	set2 := NewRotate(ctx, 5, cfg)
+	set2 := New(ctx, 5, cfg)
 	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: diferrent p values") {
 		t.Errorf("Unexpected error, %v", err)
 	}
@@ -62,22 +66,9 @@ func TestRotate_Union_koIncompatibleCurrentBFs(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := NewRotate(ctx, 5, testCfg)
-	set2 := NewRotate(ctx, 5, testCfg)
-	set2.Current.k = 111
-	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "!= k2(111)") {
-		t.Errorf("Unexpected error, %v", err)
-	}
-}
-
-func TestRotate_Union_koIncompatiblePreviousBFs(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	set1 := NewRotate(ctx, 5, testCfg)
-	set2 := NewRotate(ctx, 5, testCfg)
-	set2.Previous.k = 111
-	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "!= k2(111)") {
+	set1 := New(ctx, 5, testutils.TestCfg)
+	set2 := New(ctx, 5, testutils.TestCfg2)
+	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: diferrent p values") {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }
@@ -86,8 +77,8 @@ func TestRotate_Union_koDifferentHashFuncsBFs(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := NewRotate(ctx, 5, testCfg)
-	set2 := NewRotate(ctx, 5, testCfg)
+	set1 := New(ctx, 5, testutils.TestCfg)
+	set2 := New(ctx, 5, testutils.TestCfg)
 	set2.Config.HashName = "optimal"
 	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: different hashers") {
 		t.Errorf("Unexpected error, %v", err)
@@ -98,10 +89,10 @@ func TestRotate_Unmarshal_okCancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := NewRotate(ctx, 5, testCfg)
+	set1 := New(ctx, 5, testutils.TestCfg)
 	elem := []byte("wwwww")
 	set1.Add(elem)
-	set2 := NewRotate(ctx, 5, testCfg)
+	set2 := New(ctx, 5, testutils.TestCfg)
 	if set2.Check(elem) {
 		t.Errorf("Unexpected elem %s in set2", elem)
 	}
@@ -121,22 +112,22 @@ func TestRotate_UnmarshalBinary_ko(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := NewRotate(ctx, 5, testCfg)
+	set1 := New(ctx, 5, testutils.TestCfg)
 	if err := set1.UnmarshalBinary([]byte{}); err == nil {
 		t.Error("should have given error")
 	}
 }
 
-func TestRotate_keepRotating(t *testing.T) {
+func TestRotate_KeepRotating(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	dt := 5 * time.Millisecond
 
-	rotate := &Rotate{
-		Previous: NewBloomfilter(testCfg),
-		Current:  NewBloomfilter(testCfg),
-		Next:     NewBloomfilter(testCfg),
-		Config:   testCfg,
+	rotate := &Bloomfilter{
+		Previous: bfilter.New(testutils.TestCfg),
+		Current:  bfilter.New(testutils.TestCfg),
+		Next:     bfilter.New(testutils.TestCfg),
+		Config:   testutils.TestCfg,
 		cancel:   cancel,
 		mutex:    &sync.RWMutex{},
 		TTL:      5,
@@ -175,7 +166,7 @@ func TestRotate_keepRotating(t *testing.T) {
 
 	}
 
-	rotate2 := new(Rotate)
+	rotate2 := new(Bloomfilter)
 	if err := gob.NewDecoder(serialized).Decode(rotate2); err != nil {
 		t.Errorf("error encoding Rotate, %s", err.Error())
 	}
