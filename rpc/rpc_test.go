@@ -2,34 +2,59 @@ package rpc
 
 import (
 	"context"
-	"net"
-	"net/http"
-	"net/rpc"
 	"testing"
 
 	"github.com/letgoapp/go-bloomfilter/rotate"
 	"github.com/letgoapp/go-bloomfilter/testutils"
 )
 
-func TestBFType_ok(t *testing.T) {
-	bf := New(context.Background(), 5, testutils.TestCfg)
-	err := rpc.Register(bf)
+func TestBFAdd_ok(t *testing.T) {
+	b := New(context.Background(), 5, testutils.TestCfg)
+
+	var (
+		addOutput AddOutput
+		elems1    = [][]byte{[]byte("elem1"), []byte("elem2")}
+	)
+
+	err := b.Add(AddInput{elems1}, &addOutput)
 	if err != nil {
-		t.Errorf("register error: %s", err.Error())
+		t.Errorf("unexpected error: %s", err.Error())
 		return
 	}
-	rpc.HandleHTTP()
-	l, err := net.Listen("tcp", ":1234")
+
+	b.Close()
+}
+
+func TestBFCheck_ok(t *testing.T) {
+	b := New(context.Background(), 5, testutils.TestCfg)
+
+	var (
+		addOutput   AddOutput
+		checkOutput CheckOutput
+		elems1      = [][]byte{[]byte("elem1"), []byte("elem2")}
+	)
+
+	err := b.Add(AddInput{elems1}, &addOutput)
 	if err != nil {
-		t.Errorf("listen error: %s", err.Error())
+		t.Errorf("unexpected error: %s", err.Error())
 		return
 	}
-	go http.Serve(l, nil)
-	client, err := rpc.DialHTTP("tcp", ":1234")
+
+	err = b.Check(CheckInput{elems1}, &checkOutput)
 	if err != nil {
-		t.Errorf("dialing error: %s", err.Error())
+		t.Errorf("unexpected error: %s", err.Error())
 		return
 	}
+	if len(checkOutput.Checks) != 2 || !checkOutput.Checks[0] || !checkOutput.Checks[1] {
+		t.Errorf("checks error, expected true elements")
+		return
+	}
+
+	b.Close()
+}
+
+func TestBFUnion_ok(t *testing.T) {
+	b := New(context.Background(), 5, testutils.TestCfg)
 
 	var (
 		addOutput   AddOutput
@@ -40,40 +65,22 @@ func TestBFType_ok(t *testing.T) {
 		elems3      = [][]byte{[]byte("house"), []byte("mouse")}
 	)
 
-	err = client.Call("BFType.Add", AddInput{elems1}, &addOutput)
+	err := b.Add(AddInput{elems1}, &addOutput)
 	if err != nil {
 		t.Errorf("unexpected error: %s", err.Error())
 		return
 	}
 
-	err = client.Call("BFType.Check", CheckInput{elems1}, &checkOutput)
-	if err != nil {
-		t.Errorf("unexpected error: %s", err.Error())
-		return
-	}
-	if len(checkOutput.Checks) != 2 || !checkOutput.Checks[0] || !checkOutput.Checks[1] {
-		t.Errorf("checks error, expected true elements")
-		return
-	}
+	var bf2 = rotate.New(context.Background(), 5, testutils.TestCfg)
+	bf2.Add([]byte("house"))
 
-	divCall := client.Go("BFType.Check", elems1, &checkOutput, nil)
-	<-divCall.Done
-
-	if len(checkOutput.Checks) != 2 || !checkOutput.Checks[0] || !checkOutput.Checks[1] {
-		t.Errorf("checks error, expected true elements")
-		return
-	}
-
-	var b = rotate.New(context.Background(), 5, testutils.TestCfg)
-	b.Add([]byte("house"))
-
-	err = client.Call("BFType.Union", UnionInput{b}, &unionOutput)
+	err = b.Union(UnionInput{bf2}, &unionOutput)
 	if err != nil {
 		t.Errorf("unexpected error: %s", err.Error())
 		return
 	}
 
-	err = client.Call("BFType.Check", CheckInput{elems2}, &checkOutput)
+	err = b.Check(CheckInput{elems2}, &checkOutput)
 	if err != nil {
 		t.Errorf("unexpected error: %s", err.Error())
 		return
@@ -83,13 +90,12 @@ func TestBFType_ok(t *testing.T) {
 		return
 	}
 
-	var b2 = rotate.New(context.Background(), 5, testutils.TestCfg)
-	b2.Add([]byte("mouse"))
+	var bf3 = rotate.New(context.Background(), 5, testutils.TestCfg)
+	bf3.Add([]byte("mouse"))
 
-	divCall = client.Go("BFType.Union", UnionInput{b2}, &unionOutput, nil)
-	<-divCall.Done
+	b.Union(UnionInput{bf3}, &unionOutput)
 
-	err = client.Call("BFType.Check", CheckInput{elems3}, &checkOutput)
+	err = b.Check(CheckInput{elems3}, &checkOutput)
 	if err != nil {
 		t.Errorf("unexpected error: %s", err.Error())
 		return
@@ -100,5 +106,48 @@ func TestBFType_ok(t *testing.T) {
 	}
 
 	bf.Close()
-	return
+}
+
+func TestBFAdd_ko(t *testing.T) {
+	b := BFType(0)
+	bf = nil
+	var (
+		addOutput AddOutput
+		elems1    = [][]byte{[]byte("elem1"), []byte("elem2")}
+	)
+
+	err := b.Add(AddInput{elems1}, &addOutput)
+	if err != ErrNoBloomfilterInitialized {
+		t.Error("error, should have been no bloomfilter initialized")
+	}
+}
+
+func TestBFCheck_ko(t *testing.T) {
+	b := BFType(0)
+	bf = nil
+	var (
+		checkOutput CheckOutput
+		elems1      = [][]byte{[]byte("elem1"), []byte("elem2")}
+	)
+
+	err := b.Check(CheckInput{elems1}, &checkOutput)
+	if err != ErrNoBloomfilterInitialized {
+		t.Error("error, should have been no bloomfilter initialized")
+	}
+}
+
+func TestBFUnion_ko(t *testing.T) {
+	b := BFType(0)
+	bf = nil
+	var (
+		unionOutput UnionOutput
+	)
+
+	var bf2 = rotate.New(context.Background(), 5, testutils.TestCfg)
+	bf2.Add([]byte("house"))
+
+	err := b.Union(UnionInput{bf2}, &unionOutput)
+	if err != ErrNoBloomfilterInitialized {
+		t.Error("error, should have been no bloomfilter initialized")
+	}
 }
