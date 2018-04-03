@@ -2,7 +2,7 @@ package bloomfilter
 
 import "math"
 
-type Set interface {
+type Bloomfilter interface {
 	Add([]byte)
 	Check([]byte) bool
 	Union(interface{}) (float64, error)
@@ -12,6 +12,11 @@ type Config struct {
 	N        uint
 	P        float64
 	HashName string
+}
+
+var EmptyConfig = Config{
+	N: 2,
+	P: .5,
 }
 
 func M(n uint, p float64) uint {

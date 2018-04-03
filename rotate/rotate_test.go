@@ -18,8 +18,8 @@ func TestRotate_Union_ok(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := New(ctx, 5, testutils.TestCfg)
-	set2 := New(ctx, 5, testutils.TestCfg)
+	set1 := New(ctx, Config{testutils.TestCfg, 5})
+	set2 := New(ctx, Config{testutils.TestCfg, 5})
 
 	testutils.CallSetUnion(t, set1, set2)
 }
@@ -28,7 +28,7 @@ func TestRotate_Union_koIncorrectType(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := New(ctx, 5, testutils.TestCfg)
+	set1 := New(ctx, Config{testutils.TestCfg, 5})
 	set2 := 24
 
 	if _, err := set1.Union(set2); err != bloomfilter.ErrImpossibleToTreat {
@@ -40,10 +40,10 @@ func TestRotate_Union_koIncompatibleN(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := New(ctx, 5, testutils.TestCfg)
+	set1 := New(ctx, Config{testutils.TestCfg, 5})
 	cfg := testutils.TestCfg
 	cfg.N = 1
-	set2 := New(ctx, 5, cfg)
+	set2 := New(ctx, Config{cfg, 5})
 	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: diferrent n values") {
 		t.Errorf("Unexpected error, %v", err)
 	}
@@ -53,10 +53,10 @@ func TestRotate_Union_koIncompatibleP(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := New(ctx, 5, testutils.TestCfg)
+	set1 := New(ctx, Config{testutils.TestCfg, 5})
 	cfg := testutils.TestCfg
 	cfg.P = 0.5
-	set2 := New(ctx, 5, cfg)
+	set2 := New(ctx, Config{cfg, 5})
 	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: diferrent p values") {
 		t.Errorf("Unexpected error, %v", err)
 	}
@@ -66,8 +66,8 @@ func TestRotate_Union_koIncompatibleCurrentBFs(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := New(ctx, 5, testutils.TestCfg)
-	set2 := New(ctx, 5, testutils.TestCfg2)
+	set1 := New(ctx, Config{testutils.TestCfg, 5})
+	set2 := New(ctx, Config{testutils.TestCfg2, 5})
 	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: diferrent p values") {
 		t.Errorf("Unexpected error, %v", err)
 	}
@@ -77,8 +77,8 @@ func TestRotate_Union_koDifferentHashFuncsBFs(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := New(ctx, 5, testutils.TestCfg)
-	set2 := New(ctx, 5, testutils.TestCfg)
+	set1 := New(ctx, Config{testutils.TestCfg, 5})
+	set2 := New(ctx, Config{testutils.TestCfg, 5})
 	set2.Config.HashName = "optimal"
 	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: different hashers") {
 		t.Errorf("Unexpected error, %v", err)
@@ -89,10 +89,10 @@ func TestRotate_Unmarshal_okCancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := New(ctx, 5, testutils.TestCfg)
+	set1 := New(ctx, Config{testutils.TestCfg, 5})
 	elem := []byte("wwwww")
 	set1.Add(elem)
-	set2 := New(ctx, 5, testutils.TestCfg)
+	set2 := New(ctx, Config{testutils.TestCfg, 5})
 	if set2.Check(elem) {
 		t.Errorf("Unexpected elem %s in set2", elem)
 	}
@@ -112,7 +112,7 @@ func TestRotate_UnmarshalBinary_ko(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	set1 := New(ctx, 5, testutils.TestCfg)
+	set1 := New(ctx, Config{testutils.TestCfg, 5})
 	if err := set1.UnmarshalBinary([]byte{}); err == nil {
 		t.Error("should have given error")
 	}
@@ -127,10 +127,9 @@ func TestRotate_KeepRotating(t *testing.T) {
 		Previous: bfilter.New(testutils.TestCfg),
 		Current:  bfilter.New(testutils.TestCfg),
 		Next:     bfilter.New(testutils.TestCfg),
-		Config:   testutils.TestCfg,
+		Config:   Config{testutils.TestCfg, 5},
 		cancel:   cancel,
 		mutex:    &sync.RWMutex{},
-		TTL:      5,
 		ctx:      ctx,
 	}
 

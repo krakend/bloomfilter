@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/letgoapp/go-bloomfilter"
 	"github.com/letgoapp/go-bloomfilter/rotate"
 )
 
-type BFType int
+type Bloomfilter int
 
 type AddInput struct {
 	Elems [][]byte
@@ -31,7 +30,12 @@ type UnionInput struct {
 }
 
 type UnionOutput struct {
-	Count float64
+	Capacity float64
+}
+
+type Config struct {
+	rotate.Config
+	Port int
 }
 
 var (
@@ -39,7 +43,7 @@ var (
 	bf                          *rotate.Bloomfilter
 )
 
-func (b *BFType) Add(in AddInput, out *AddOutput) error {
+func (b *Bloomfilter) Add(in AddInput, out *AddOutput) error {
 	if bf == nil {
 		out.Count = 0
 		return ErrNoBloomfilterInitialized
@@ -55,7 +59,7 @@ func (b *BFType) Add(in AddInput, out *AddOutput) error {
 	return nil
 }
 
-func (b *BFType) Check(in CheckInput, out *CheckOutput) error {
+func (b *Bloomfilter) Check(in CheckInput, out *CheckOutput) error {
 	checkRes := make([]bool, len(in.Elems))
 
 	if bf == nil {
@@ -71,25 +75,29 @@ func (b *BFType) Check(in CheckInput, out *CheckOutput) error {
 	return nil
 }
 
-func (b *BFType) Union(in UnionInput, out *UnionOutput) error {
+func (b *Bloomfilter) Union(in UnionInput, out *UnionOutput) error {
 	if bf == nil {
-		out.Count = 0
+		out.Capacity = 0
 		return ErrNoBloomfilterInitialized
 	}
 
 	var err error
-	out.Count, err = bf.Union(in.BF)
+	out.Capacity, err = bf.Union(in.BF)
 
 	return err
 }
 
-func New(ctx context.Context, ttl uint, cfg bloomfilter.Config) *BFType {
-	bf = rotate.New(ctx, ttl, cfg)
+func New(ctx context.Context, cfg Config) *Bloomfilter {
+	if bf != nil {
+		bf.Close()
+	}
 
-	return new(BFType)
+	bf = rotate.New(ctx, cfg.Config)
+
+	return new(Bloomfilter)
 }
 
-func (b *BFType) Close() {
+func (b *Bloomfilter) Close() {
 	if bf != nil {
 		bf.Close()
 	}

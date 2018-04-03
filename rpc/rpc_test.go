@@ -9,7 +9,7 @@ import (
 )
 
 func TestBFAdd_ok(t *testing.T) {
-	b := New(context.Background(), 5, testutils.TestCfg)
+	b := New(context.Background(), Config{rotate.Config{testutils.TestCfg, 5}, 1234})
 
 	var (
 		addOutput AddOutput
@@ -26,7 +26,7 @@ func TestBFAdd_ok(t *testing.T) {
 }
 
 func TestBFCheck_ok(t *testing.T) {
-	b := New(context.Background(), 5, testutils.TestCfg)
+	b := New(context.Background(), Config{rotate.Config{testutils.TestCfg, 5}, 1234})
 
 	var (
 		addOutput   AddOutput
@@ -54,7 +54,7 @@ func TestBFCheck_ok(t *testing.T) {
 }
 
 func TestBFUnion_ok(t *testing.T) {
-	b := New(context.Background(), 5, testutils.TestCfg)
+	b := New(context.Background(), Config{rotate.Config{testutils.TestCfg, 5}, 1234})
 
 	var (
 		addOutput   AddOutput
@@ -71,7 +71,7 @@ func TestBFUnion_ok(t *testing.T) {
 		return
 	}
 
-	var bf2 = rotate.New(context.Background(), 5, testutils.TestCfg)
+	var bf2 = rotate.New(context.Background(), rotate.Config{testutils.TestCfg, 5})
 	bf2.Add([]byte("house"))
 
 	err = b.Union(UnionInput{bf2}, &unionOutput)
@@ -90,7 +90,7 @@ func TestBFUnion_ok(t *testing.T) {
 		return
 	}
 
-	var bf3 = rotate.New(context.Background(), 5, testutils.TestCfg)
+	var bf3 = rotate.New(context.Background(), rotate.Config{testutils.TestCfg, 5})
 	bf3.Add([]byte("mouse"))
 
 	b.Union(UnionInput{bf3}, &unionOutput)
@@ -109,7 +109,7 @@ func TestBFUnion_ok(t *testing.T) {
 }
 
 func TestBFAdd_ko(t *testing.T) {
-	b := BFType(0)
+	b := Bloomfilter(0)
 	bf = nil
 	var (
 		addOutput AddOutput
@@ -123,7 +123,7 @@ func TestBFAdd_ko(t *testing.T) {
 }
 
 func TestBFCheck_ko(t *testing.T) {
-	b := BFType(0)
+	b := Bloomfilter(0)
 	bf = nil
 	var (
 		checkOutput CheckOutput
@@ -137,13 +137,13 @@ func TestBFCheck_ko(t *testing.T) {
 }
 
 func TestBFUnion_ko(t *testing.T) {
-	b := BFType(0)
+	b := Bloomfilter(0)
 	bf = nil
 	var (
 		unionOutput UnionOutput
 	)
 
-	var bf2 = rotate.New(context.Background(), 5, testutils.TestCfg)
+	var bf2 = rotate.New(context.Background(), rotate.Config{testutils.TestCfg, 5})
 	bf2.Add([]byte("house"))
 
 	err := b.Union(UnionInput{bf2}, &unionOutput)

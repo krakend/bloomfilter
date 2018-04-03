@@ -15,31 +15,32 @@ import (
 	"github.com/letgoapp/go-bloomfilter/bfilter"
 )
 
-func New(ctx context.Context, TTL uint, cfg bloomfilter.Config) *Bloomfilter {
+func New(ctx context.Context, cfg Config) *Bloomfilter {
 	localCtx, cancel := context.WithCancel(ctx)
+	prevCfg := bloomfilter.EmptyConfig
+	prevCfg.HashName = cfg.HashName
 	r := &Bloomfilter{
-		Previous: bfilter.New(bloomfilter.Config{
-			N:        2,
-			P:        .5,
-			HashName: cfg.HashName}),
-		Current: bfilter.New(cfg),
-		Next:    bfilter.New(cfg),
-		Config:  cfg,
-		TTL:     TTL,
-
-		cancel: cancel,
-		mutex:  &sync.RWMutex{},
-		ctx:    ctx,
+		Previous: bfilter.New(prevCfg),
+		Current:  bfilter.New(cfg.Config),
+		Next:     bfilter.New(cfg.Config),
+		Config:   cfg,
+		cancel:   cancel,
+		mutex:    &sync.RWMutex{},
+		ctx:      ctx,
 	}
 
-	go r.keepRotating(localCtx, time.NewTicker(time.Duration(TTL)*time.Second).C)
+	go r.keepRotating(localCtx, time.NewTicker(time.Duration(cfg.TTL)*time.Second).C)
 	return r
+}
+
+type Config struct {
+	bloomfilter.Config
+	TTL uint
 }
 
 type Bloomfilter struct {
 	Previous, Current, Next *bfilter.Bloomfilter
-	TTL                     uint
-	Config                  bloomfilter.Config
+	Config                  Config
 	mutex                   *sync.RWMutex
 	ctx                     context.Context
 	cancel                  context.CancelFunc
@@ -131,8 +132,7 @@ func (bs *Bloomfilter) keepRotating(ctx context.Context, c <-chan time.Time) {
 
 type SerializibleBloomfilter struct {
 	Previous, Current, Next *bfilter.Bloomfilter
-	Config                  bloomfilter.Config
-	TTL                     uint
+	Config                  Config
 }
 
 func (bs *Bloomfilter) MarshalBinary() ([]byte, error) {
@@ -145,7 +145,6 @@ func (bs *Bloomfilter) MarshalBinary() ([]byte, error) {
 		Next:     bs.Next,
 		Current:  bs.Current,
 		Config:   bs.Config,
-		TTL:      bs.TTL,
 	})
 	//zip buf.Bytes
 	return buf.Bytes(), err
@@ -179,13 +178,12 @@ func (bs *Bloomfilter) UnmarshalBinary(data []byte) error {
 		Next:     target.Next,
 		Current:  target.Current,
 		Config:   target.Config,
-		TTL:      target.TTL,
 		ctx:      ctx,
 		cancel:   cancel,
 		mutex:    new(sync.RWMutex),
 	}
 
-	go bs.keepRotating(localCtx, time.NewTicker(time.Duration(bs.TTL)*time.Second).C)
+	go bs.keepRotating(localCtx, time.NewTicker(time.Duration(bs.Config.TTL)*time.Second).C)
 
 	return nil
 }

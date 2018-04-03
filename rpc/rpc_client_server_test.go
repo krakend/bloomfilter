@@ -11,8 +11,8 @@ import (
 	"github.com/letgoapp/go-bloomfilter/testutils"
 )
 
-func TestBFType_ok(t *testing.T) {
-	b := New(context.Background(), 5, testutils.TestCfg)
+func TestBloomfilter_ok(t *testing.T) {
+	b := New(context.Background(), Config{rotate.Config{testutils.TestCfg, 5}, 1234})
 	err := rpc.Register(b)
 	if err != nil {
 		t.Errorf("register error: %s", err.Error())
@@ -40,13 +40,13 @@ func TestBFType_ok(t *testing.T) {
 		elems3      = [][]byte{[]byte("house"), []byte("mouse")}
 	)
 
-	err = client.Call("BFType.Add", AddInput{elems1}, &addOutput)
+	err = client.Call("Bloomfilter.Add", AddInput{elems1}, &addOutput)
 	if err != nil {
 		t.Errorf("unexpected error: %s", err.Error())
 		return
 	}
 
-	err = client.Call("BFType.Check", CheckInput{elems1}, &checkOutput)
+	err = client.Call("Bloomfilter.Check", CheckInput{elems1}, &checkOutput)
 	if err != nil {
 		t.Errorf("unexpected error: %s", err.Error())
 		return
@@ -56,7 +56,7 @@ func TestBFType_ok(t *testing.T) {
 		return
 	}
 
-	divCall := client.Go("BFType.Check", elems1, &checkOutput, nil)
+	divCall := client.Go("Bloomfilter.Check", elems1, &checkOutput, nil)
 	<-divCall.Done
 
 	if len(checkOutput.Checks) != 2 || !checkOutput.Checks[0] || !checkOutput.Checks[1] {
@@ -64,16 +64,16 @@ func TestBFType_ok(t *testing.T) {
 		return
 	}
 
-	var bf2 = rotate.New(context.Background(), 5, testutils.TestCfg)
+	var bf2 = rotate.New(context.Background(), rotate.Config{testutils.TestCfg, 5})
 	bf2.Add([]byte("house"))
 
-	err = client.Call("BFType.Union", UnionInput{bf2}, &unionOutput)
+	err = client.Call("Bloomfilter.Union", UnionInput{bf2}, &unionOutput)
 	if err != nil {
 		t.Errorf("unexpected error: %s", err.Error())
 		return
 	}
 
-	err = client.Call("BFType.Check", CheckInput{elems2}, &checkOutput)
+	err = client.Call("Bloomfilter.Check", CheckInput{elems2}, &checkOutput)
 	if err != nil {
 		t.Errorf("unexpected error: %s", err.Error())
 		return
@@ -83,13 +83,13 @@ func TestBFType_ok(t *testing.T) {
 		return
 	}
 
-	var bf3 = rotate.New(context.Background(), 5, testutils.TestCfg)
+	var bf3 = rotate.New(context.Background(), rotate.Config{testutils.TestCfg, 5})
 	bf3.Add([]byte("mouse"))
 
-	divCall = client.Go("BFType.Union", UnionInput{bf3}, &unionOutput, nil)
+	divCall = client.Go("Bloomfilter.Union", UnionInput{bf3}, &unionOutput, nil)
 	<-divCall.Done
 
-	err = client.Call("BFType.Check", CheckInput{elems3}, &checkOutput)
+	err = client.Call("Bloomfilter.Check", CheckInput{elems3}, &checkOutput)
 	if err != nil {
 		t.Errorf("unexpected error: %s", err.Error())
 		return
