@@ -26,3 +26,9 @@ func M(n uint, p float64) uint {
 func K(m, n uint) uint {
 	return uint(math.Ceil(math.Log(2.0) * float64(m) / float64(n)))
 }
+
+type EmptySet int
+
+func (e EmptySet) Check(_ []byte) bool                { return false }
+func (e EmptySet) Add(_ []byte)                       {}
+func (e EmptySet) Union(interface{}) (float64, error) { return -1, nil }
