@@ -7,7 +7,22 @@ import (
 	"github.com/letgoapp/go-bloomfilter/rotate"
 )
 
+type Config struct {
+	rotate.Config
+	Port int
+}
+
 type Bloomfilter int
+
+func New(ctx context.Context, cfg Config) *Bloomfilter {
+	if bf != nil {
+		bf.Close()
+	}
+
+	bf = rotate.New(ctx, cfg.Config)
+
+	return new(Bloomfilter)
+}
 
 type AddInput struct {
 	Elems [][]byte
@@ -16,32 +31,6 @@ type AddInput struct {
 type AddOutput struct {
 	Count int
 }
-
-type CheckInput struct {
-	Elems [][]byte
-}
-
-type CheckOutput struct {
-	Checks []bool
-}
-
-type UnionInput struct {
-	BF *rotate.Bloomfilter
-}
-
-type UnionOutput struct {
-	Capacity float64
-}
-
-type Config struct {
-	rotate.Config
-	Port int
-}
-
-var (
-	ErrNoBloomfilterInitialized = fmt.Errorf("Bloomfilter not initialized")
-	bf                          *rotate.Bloomfilter
-)
 
 func (b *Bloomfilter) Add(in AddInput, out *AddOutput) error {
 	if bf == nil {
@@ -57,6 +46,14 @@ func (b *Bloomfilter) Add(in AddInput, out *AddOutput) error {
 	out.Count = k
 
 	return nil
+}
+
+type CheckInput struct {
+	Elems [][]byte
+}
+
+type CheckOutput struct {
+	Checks []bool
 }
 
 func (b *Bloomfilter) Check(in CheckInput, out *CheckOutput) error {
@@ -75,6 +72,14 @@ func (b *Bloomfilter) Check(in CheckInput, out *CheckOutput) error {
 	return nil
 }
 
+type UnionInput struct {
+	BF *rotate.Bloomfilter
+}
+
+type UnionOutput struct {
+	Capacity float64
+}
+
 func (b *Bloomfilter) Union(in UnionInput, out *UnionOutput) error {
 	if bf == nil {
 		out.Capacity = 0
@@ -87,18 +92,17 @@ func (b *Bloomfilter) Union(in UnionInput, out *UnionOutput) error {
 	return err
 }
 
-func New(ctx context.Context, cfg Config) *Bloomfilter {
-	if bf != nil {
-		bf.Close()
-	}
-
-	bf = rotate.New(ctx, cfg.Config)
-
-	return new(Bloomfilter)
-}
-
 func (b *Bloomfilter) Close() {
 	if bf != nil {
 		bf.Close()
 	}
 }
+
+func (b *Bloomfilter) Bloomfilter() *rotate.Bloomfilter {
+	return bf
+}
+
+var (
+	ErrNoBloomfilterInitialized = fmt.Errorf("Bloomfilter not initialized")
+	bf                          *rotate.Bloomfilter
+)
