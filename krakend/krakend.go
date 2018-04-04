@@ -2,6 +2,7 @@ package krakend
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 
 	"github.com/devopsfaith/krakend/config"
@@ -24,12 +25,13 @@ func Register(ctx context.Context, cfg config.ServiceConfig, logger logging.Logg
 		logger.Info(errNoConfig.Error(), cfg.ExtraConfig)
 		return new(bloomfilter.EmptySet), errNoConfig
 	}
-	v, ok := data.(bf_rpc.Config)
-	if !ok {
-		logger.Info(errWrongConfig.Error(), data)
-		return new(bloomfilter.EmptySet), errWrongConfig
+	raw, _ := json.Marshal(data)
+	var rpcConfig bf_rpc.Config
+	if err := json.Unmarshal(raw, &rpcConfig); err != nil {
+		logger.Info(err.Error(), string(raw))
+		return new(bloomfilter.EmptySet), err
 	}
 
-	bf := server.New(ctx, v)
+	bf := server.New(ctx, rpcConfig)
 	return bf.Bloomfilter(), nil
 }
