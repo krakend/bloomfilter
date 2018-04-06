@@ -25,7 +25,12 @@ func Register(ctx context.Context, cfg config.ServiceConfig, logger logging.Logg
 		logger.Info(errNoConfig.Error(), cfg.ExtraConfig)
 		return new(bloomfilter.EmptySet), errNoConfig
 	}
-	raw, _ := json.Marshal(data)
+	raw, err := json.Marshal(data)
+	if err != nil {
+		logger.Info(errWrongConfig.Error(), cfg.ExtraConfig)
+		return new(bloomfilter.EmptySet), errWrongConfig
+	}
+
 	var rpcConfig bf_rpc.Config
 	if err := json.Unmarshal(raw, &rpcConfig); err != nil {
 		logger.Info(err.Error(), string(raw))

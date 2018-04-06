@@ -19,11 +19,6 @@ func New(ctx context.Context, cfg rpc_bf.Config) *rpc_bf.Bloomfilter {
 }
 
 func Serve(ctx context.Context, port int, bf *rpc_bf.Bloomfilter) error {
-	err := rpc.Register(bf)
-	if err != nil {
-		return err
-	}
-
 	rpc.HandleHTTP()
 	l, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {

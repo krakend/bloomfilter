@@ -11,7 +11,9 @@ import (
 )
 
 func ExampleIntegration() {
-	client, err := rpc.DialHTTP("tcp", ":1234")
+	fmt.Println("connecting")
+	client, err := rpc.DialHTTP("tcp", "127.0.0.1:1234")
+	fmt.Println("connected")
 	if err != nil {
 		fmt.Printf("dialing error: %s", err.Error())
 		return
@@ -21,7 +23,7 @@ func ExampleIntegration() {
 		addOutput   bf_rpc.AddOutput
 		checkOutput bf_rpc.CheckOutput
 		unionOutput bf_rpc.UnionOutput
-		elems1      = [][]byte{[]byte("elem1"), []byte("elem2")}
+		elems1      = [][]byte{[]byte("rrrr"), []byte("elem2")}
 		elems2      = [][]byte{[]byte("house")}
 		elems3      = [][]byte{[]byte("house"), []byte("mouse")}
 		cfg         = rotate.Config{

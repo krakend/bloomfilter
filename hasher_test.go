@@ -26,6 +26,15 @@ func BenchmarkHasher(b *testing.B) {
 	}
 }
 
+func TestDefaultHashFactory(t *testing.T) {
+	for _, hash := range DefaultHashFactory(23) {
+		array1 := []byte{1, 2, 3}
+		if !reflect.DeepEqual(hash(array1), hash(array1)) {
+			t.Error("undeterministic")
+		}
+	}
+}
+
 func TestOptimalHashFactory(t *testing.T) {
 	for _, hash := range OptimalHashFactory(23) {
 		array1 := []byte{1, 2, 3}

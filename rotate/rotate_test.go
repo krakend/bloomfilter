@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/letgoapp/go-bloomfilter"
-	"github.com/letgoapp/go-bloomfilter/bfilter"
+	"github.com/letgoapp/go-bloomfilter/bloomfilter"
 	"github.com/letgoapp/go-bloomfilter/testutils"
 )
 
