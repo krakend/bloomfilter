@@ -23,7 +23,8 @@ func TestRegister_ok(t *testing.T) {
 				},
 				TTL: 1500,
 			},
-			Port: 1234,
+			Port:  1234,
+			Route: "/test-rpc",
 		}
 	serviceConf := config.ServiceConfig{
 		ExtraConfig: config.ExtraConfig{
@@ -59,7 +60,8 @@ func TestRegister_koNamespace(t *testing.T) {
 				},
 				TTL: 1500,
 			},
-			Port: 1234,
+			Port:  1234,
+			Route: "/test-rpc",
 		}
 	serviceConf := config.ServiceConfig{
 		ExtraConfig: config.ExtraConfig{

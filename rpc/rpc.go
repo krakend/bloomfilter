@@ -9,7 +9,8 @@ import (
 
 type Config struct {
 	rotate.Config
-	Port int
+	Port  int
+	Route string
 }
 
 type Bloomfilter int
