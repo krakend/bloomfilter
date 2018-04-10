@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/rpc"
 
-	bloomfilter "github.com/letgoapp/go-bloomfilter"
+	"github.com/letgoapp/go-bloomfilter"
 	"github.com/letgoapp/go-bloomfilter/rotate"
 	bf_rpc "github.com/letgoapp/go-bloomfilter/rpc"
 )

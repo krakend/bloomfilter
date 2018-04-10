@@ -9,7 +9,7 @@ import (
 )
 
 func TestBFAdd_ok(t *testing.T) {
-	b := New(context.Background(), Config{rotate.Config{testutils.TestCfg, 5}, 1234, "/test-rpc"})
+	b := New(context.Background(), Config{rotate.Config{testutils.TestCfg, 5}, 1234})
 
 	var (
 		addOutput AddOutput
@@ -26,7 +26,7 @@ func TestBFAdd_ok(t *testing.T) {
 }
 
 func TestBFCheck_ok(t *testing.T) {
-	b := New(context.Background(), Config{rotate.Config{testutils.TestCfg, 5}, 1234, "/test-rpc"})
+	b := New(context.Background(), Config{rotate.Config{testutils.TestCfg, 5}, 1234})
 
 	var (
 		addOutput   AddOutput
@@ -54,7 +54,7 @@ func TestBFCheck_ok(t *testing.T) {
 }
 
 func TestBFUnion_ok(t *testing.T) {
-	b := New(context.Background(), Config{rotate.Config{testutils.TestCfg, 5}, 1234, "/test-rpc"})
+	b := New(context.Background(), Config{rotate.Config{testutils.TestCfg, 5}, 1234})
 
 	var (
 		addOutput   AddOutput

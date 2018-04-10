@@ -25,7 +25,7 @@ func New(address ...string) (*Bloomfilter, error) {
 	return &Bloomfilter{clients}, nil
 }
 
-func (b Bloomfilter) Add(elem []byte) {
+func (b *Bloomfilter) Add(elem []byte) {
 	for _, c := range b.client {
 		var addOutput rpc_bf.AddOutput
 		if err := c.Call("Bloomfilter.Add", rpc_bf.AddInput{[][]byte{elem}}, &addOutput); err != nil {
@@ -34,7 +34,7 @@ func (b Bloomfilter) Add(elem []byte) {
 	}
 }
 
-func (b Bloomfilter) Check(elem []byte) bool {
+func (b *Bloomfilter) Check(elem []byte) bool {
 	for _, c := range b.client {
 		var checkOutput rpc_bf.CheckOutput
 		if err := c.Call("Bloomfilter.Check", rpc_bf.CheckInput{[][]byte{elem}}, &checkOutput); err != nil {

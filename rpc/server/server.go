@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"net/http"
 	"net/rpc"
 
 	rpc_bf "github.com/letgoapp/go-bloomfilter/rpc"
@@ -13,16 +12,19 @@ import (
 func New(ctx context.Context, cfg rpc_bf.Config) *rpc_bf.Bloomfilter {
 	bf := rpc_bf.New(ctx, cfg)
 
-	go Serve(ctx, cfg.Route, cfg.Port, bf)
+	go Serve(ctx, cfg.Port, bf)
 
 	return bf
 }
 
-func Serve(ctx context.Context, route string, port int, bf *rpc_bf.Bloomfilter) error {
-	rpc.DefaultServer.HandleHTTP(route, rpc.DefaultDebugPath+route)
+func Serve(ctx context.Context, port int, bf *rpc_bf.Bloomfilter) {
+	s := rpc.NewServer()
+	s.Register(bf)
+
 	l, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
-		return err
+		fmt.Println("unable to setup RPC listener:", err.Error())
+		return
 	}
 
 	go func() {
@@ -35,5 +37,5 @@ func Serve(ctx context.Context, route string, port int, bf *rpc_bf.Bloomfilter) 
 		}
 	}()
 
-	return http.Serve(l, nil)
+	s.Accept(l)
 }
