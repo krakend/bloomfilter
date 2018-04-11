@@ -109,7 +109,7 @@ func TestBFUnion_ok(t *testing.T) {
 }
 
 func TestBFAdd_ko(t *testing.T) {
-	b := Bloomfilter(0)
+	b := new(Bloomfilter)
 	bf = nil
 	var (
 		addOutput AddOutput
@@ -123,7 +123,7 @@ func TestBFAdd_ko(t *testing.T) {
 }
 
 func TestBFCheck_ko(t *testing.T) {
-	b := Bloomfilter(0)
+	b := new(Bloomfilter)
 	bf = nil
 	var (
 		checkOutput CheckOutput
@@ -137,7 +137,7 @@ func TestBFCheck_ko(t *testing.T) {
 }
 
 func TestBFUnion_ko(t *testing.T) {
-	b := Bloomfilter(0)
+	b := new(Bloomfilter)
 	bf = nil
 	var (
 		unionOutput UnionOutput

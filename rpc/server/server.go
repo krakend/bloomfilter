@@ -19,7 +19,7 @@ func New(ctx context.Context, cfg rpc_bf.Config) *rpc_bf.Bloomfilter {
 
 func Serve(ctx context.Context, port int, bf *rpc_bf.Bloomfilter) {
 	s := rpc.NewServer()
-	s.Register(bf)
+	s.Register(&bf.BloomfilterRPC)
 
 	l, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
@@ -31,6 +31,7 @@ func Serve(ctx context.Context, port int, bf *rpc_bf.Bloomfilter) {
 		for {
 			select {
 			case <-ctx.Done():
+				l.Close()
 				bf.Close()
 				return
 			}

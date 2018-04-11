@@ -12,7 +12,11 @@ type Config struct {
 	Port int
 }
 
-type Bloomfilter int
+type BloomfilterRPC int
+
+type Bloomfilter struct {
+	BloomfilterRPC
+}
 
 func New(ctx context.Context, cfg Config) *Bloomfilter {
 	if bf != nil {
@@ -32,7 +36,10 @@ type AddOutput struct {
 	Count int
 }
 
-func (b *Bloomfilter) Add(in AddInput, out *AddOutput) error {
+func (b *BloomfilterRPC) Add(in AddInput, out *AddOutput) error {
+	fmt.Println("add:", in.Elems)
+	defer func() { fmt.Println("added elements:", out.Count) }()
+
 	if bf == nil {
 		out.Count = 0
 		return ErrNoBloomfilterInitialized
@@ -56,7 +63,10 @@ type CheckOutput struct {
 	Checks []bool
 }
 
-func (b *Bloomfilter) Check(in CheckInput, out *CheckOutput) error {
+func (b *BloomfilterRPC) Check(in CheckInput, out *CheckOutput) error {
+	fmt.Println("check:", in.Elems)
+	defer func() { fmt.Println("checked elements:", out.Checks) }()
+
 	checkRes := make([]bool, len(in.Elems))
 
 	if bf == nil {
@@ -80,7 +90,10 @@ type UnionOutput struct {
 	Capacity float64
 }
 
-func (b *Bloomfilter) Union(in UnionInput, out *UnionOutput) error {
+func (b *BloomfilterRPC) Union(in UnionInput, out *UnionOutput) error {
+	fmt.Println("union:", in.BF)
+	defer func() { fmt.Println("union resulting capacity:", out.Capacity) }()
+
 	if bf == nil {
 		out.Capacity = 0
 		return ErrNoBloomfilterInitialized
