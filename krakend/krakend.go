@@ -12,7 +12,7 @@ import (
 	"github.com/letgoapp/go-bloomfilter/rpc/server"
 )
 
-const Namespace = "bloomfilter"
+const Namespace = "github_com/letgoapp/go-bloomfilter"
 
 var (
 	errNoConfig    = errors.New("no config for the bloomfilter")

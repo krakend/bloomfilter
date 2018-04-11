@@ -27,7 +27,7 @@ func TestRegister_ok(t *testing.T) {
 		}
 	serviceConf := config.ServiceConfig{
 		ExtraConfig: config.ExtraConfig{
-			"bloomfilter": cfg,
+			"github_com/letgoapp/go-bloomfilter": cfg,
 		},
 	}
 	logger, err := gologging.NewLogger(config.ExtraConfig{
