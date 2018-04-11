@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/gob"
+	"fmt"
+	"math/rand"
 	"strings"
 	"sync"
 	"testing"
@@ -79,7 +81,7 @@ func TestRotate_Union_koDifferentHashFuncsBFs(t *testing.T) {
 
 	set1 := New(ctx, Config{testutils.TestCfg, 5})
 	set2 := New(ctx, Config{testutils.TestCfg, 5})
-	set2.Config.HashName = "optimal"
+	set2.Config.HashName = bloomfilter.HASHER_DEFAULT
 	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: different hashers") {
 		t.Errorf("Unexpected error, %v", err)
 	}
@@ -172,5 +174,35 @@ func TestRotate_KeepRotating(t *testing.T) {
 
 	if !rotate2.Check([]byte("test")) {
 		t.Error("error: \"test\" not present")
+	}
+}
+
+func BenchmarkRotate_UnmarshalBinary_GZIP(b *testing.B) {
+	compressor = new(Gzip)
+	cfg := Config{
+		bloomfilter.Config{
+			N:        1000000,
+			P:        1e-7,
+			HashName: bloomfilter.HASHER_OPTIMAL,
+		},
+		10000,
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	benchmarkRotate_UnmarshalBinary(b, New(ctx, cfg))
+	cancel()
+}
+
+func benchmarkRotate_UnmarshalBinary(b *testing.B, bf bloomfilter.Bloomfilter) {
+	buf := make([]byte, 150*1000*1024)
+	rand.Read(buf)
+
+	for _, size := range []int{10, 1024, 1000 * 1024, 10 * 1000 * 1024, 100 * 1000 * 1024} {
+		b.Run(fmt.Sprintf("size_%d", size), func(b *testing.B) {
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				offset := i % (len(buf) - size)
+				bf.Add(buf[offset : offset+size])
+			}
+		})
 	}
 }

@@ -10,13 +10,13 @@ var (
 	TestCfg = bloomfilter.Config{
 		N:        100,
 		P:        0.001,
-		HashName: "default",
+		HashName: bloomfilter.HASHER_OPTIMAL,
 	}
 
 	TestCfg2 = bloomfilter.Config{
 		N:        100,
 		P:        0.00001,
-		HashName: "default",
+		HashName: bloomfilter.HASHER_OPTIMAL,
 	}
 )
 

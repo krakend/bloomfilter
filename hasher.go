@@ -13,6 +13,11 @@ import (
 type Hash func([]byte) []uint
 type HashFactory func(uint) []Hash
 
+const (
+	HASHER_DEFAULT = "default"
+	HASHER_OPTIMAL = "optimal"
+)
+
 var (
 	defaultHashers = []Hash{
 		MD5,
@@ -23,8 +28,8 @@ var (
 	}
 
 	HashFactoryNames = map[string]HashFactory{
-		"default": DefaultHashFactory,
-		"optimal": OptimalHashFactory,
+		HASHER_DEFAULT: DefaultHashFactory,
+		HASHER_OPTIMAL: OptimalHashFactory,
 	}
 
 	ErrImpossibleToTreat = fmt.Errorf("unable to union")
