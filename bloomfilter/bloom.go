@@ -1,11 +1,11 @@
-package bfilter
+package bloomfilter
 
 import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
 
-	"github.com/letgoapp/go-bloomfilter"
+	bfilter "github.com/letgoapp/go-bloomfilter"
 	"github.com/tmthrgd/go-bitset"
 )
 
@@ -13,17 +13,17 @@ type Bloomfilter struct {
 	bs  bitset.Bitset
 	m   uint
 	k   uint
-	h   []bloomfilter.Hash
-	cfg bloomfilter.Config
+	h   []bfilter.Hash
+	cfg bfilter.Config
 }
 
-func New(cfg bloomfilter.Config) *Bloomfilter {
-	m := bloomfilter.M(cfg.N, cfg.P)
-	k := bloomfilter.K(m, cfg.N)
+func New(cfg bfilter.Config) *Bloomfilter {
+	m := bfilter.M(cfg.N, cfg.P)
+	k := bfilter.K(m, cfg.N)
 	return &Bloomfilter{
 		m:   m,
 		k:   k,
-		h:   bloomfilter.HashFactoryNames[cfg.HashName](k),
+		h:   bfilter.HashFactoryNames[cfg.HashName](k),
 		bs:  bitset.New(m),
 		cfg: cfg,
 	}
@@ -51,7 +51,7 @@ func (b Bloomfilter) Check(elem []byte) bool {
 func (b *Bloomfilter) Union(that interface{}) (float64, error) {
 	other, ok := that.(*Bloomfilter)
 	if !ok {
-		return b.Capacity(), bloomfilter.ErrImpossibleToTreat
+		return b.Capacity(), bfilter.ErrImpossibleToTreat
 	}
 
 	if b.m != other.m {
@@ -72,7 +72,7 @@ type SerializibleBloomfilter struct {
 	M        uint
 	K        uint
 	HashName string
-	Cfg      bloomfilter.Config
+	Cfg      bfilter.Config
 }
 
 func (bs *Bloomfilter) MarshalBinary() ([]byte, error) {
@@ -101,7 +101,7 @@ func (bs *Bloomfilter) UnmarshalBinary(data []byte) error {
 		bs:  target.BS,
 		m:   target.M,
 		k:   target.K,
-		h:   bloomfilter.HashFactoryNames[target.HashName](target.K),
+		h:   bfilter.HashFactoryNames[target.HashName](target.K),
 		cfg: target.Cfg,
 	}
 
@@ -112,6 +112,6 @@ func (bs *Bloomfilter) Capacity() float64 {
 	return float64(bs.bs.Count()) / float64(bs.m)
 }
 
-func (bs *Bloomfilter) HashFactoryNameK(hashName string) []bloomfilter.Hash {
-	return bloomfilter.HashFactoryNames[hashName](bs.k)
+func (bs *Bloomfilter) HashFactoryNameK(hashName string) []bfilter.Hash {
+	return bfilter.HashFactoryNames[hashName](bs.k)
 }

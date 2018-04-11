@@ -21,7 +21,7 @@ func main() {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
-	bf := server.New(ctx, rpc.Config{
+	cfg := rpc.Config{
 		rotate.Config{
 			bloomfilter.Config{
 				N:        10000000,
@@ -31,7 +31,8 @@ func main() {
 			1000,
 		},
 		1234,
-	})
+	}
+	bf := server.New(ctx, cfg)
 	for {
 		select {
 		case sig := <-sigs:

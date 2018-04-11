@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/letgoapp/go-bloomfilter"
-	"github.com/letgoapp/go-bloomfilter/bloomfilter"
+	bfilter "github.com/letgoapp/go-bloomfilter/bloomfilter"
 	"github.com/letgoapp/go-bloomfilter/testutils"
 )
 
@@ -85,7 +85,7 @@ func TestRotate_Union_koDifferentHashFuncsBFs(t *testing.T) {
 	}
 }
 
-func TestRotate_Unmarshal_okCancel(t *testing.T) {
+func TestRotate_Unmarshal_ok(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 

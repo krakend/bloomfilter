@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/letgoapp/go-bloomfilter"
-	"github.com/letgoapp/go-bloomfilter/bloomfilter"
+	bfilter "github.com/letgoapp/go-bloomfilter/bloomfilter"
 )
 
 func New(ctx context.Context, cfg Config) *Bloomfilter {
