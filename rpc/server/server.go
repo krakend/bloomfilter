@@ -19,7 +19,11 @@ func New(ctx context.Context, cfg rpc_bf.Config) *rpc_bf.Bloomfilter {
 
 func Serve(ctx context.Context, port int, bf *rpc_bf.Bloomfilter) {
 	s := rpc.NewServer()
-	s.Register(&bf.BloomfilterRPC)
+
+	if err := s.Register(&bf.BloomfilterRPC); err != nil {
+		fmt.Println("server register error:", err.Error())
+		return
+	}
 
 	l, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
