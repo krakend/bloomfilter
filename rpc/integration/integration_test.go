@@ -11,9 +11,7 @@ import (
 )
 
 func ExampleIntegration() {
-	fmt.Println("connecting")
-	client, err := rpc.DialHTTP("tcp", "127.0.0.1:1234")
-	fmt.Println("connected")
+	client, err := rpc.Dial("tcp", "127.0.0.1:1234")
 	if err != nil {
 		fmt.Printf("dialing error: %s", err.Error())
 		return
@@ -36,13 +34,13 @@ func ExampleIntegration() {
 		}
 	)
 
-	err = client.Call("Bloomfilter.Add", bf_rpc.AddInput{elems1}, &addOutput)
+	err = client.Call("BloomfilterRPC.Add", bf_rpc.AddInput{elems1}, &addOutput)
 	if err != nil {
 		fmt.Printf("unexpected error: %s", err.Error())
 		return
 	}
 
-	err = client.Call("Bloomfilter.Check", bf_rpc.CheckInput{elems1}, &checkOutput)
+	err = client.Call("BloomfilterRPC.Check", bf_rpc.CheckInput{elems1}, &checkOutput)
 	if err != nil {
 		fmt.Printf("unexpected error: %s", err.Error())
 		return
@@ -52,7 +50,7 @@ func ExampleIntegration() {
 		return
 	}
 
-	divCall := client.Go("Bloomfilter.Check", elems1, &checkOutput, nil)
+	divCall := client.Go("BloomfilterRPC.Check", elems1, &checkOutput, nil)
 	<-divCall.Done
 
 	if len(checkOutput.Checks) != 2 || !checkOutput.Checks[0] || !checkOutput.Checks[1] {
@@ -63,14 +61,14 @@ func ExampleIntegration() {
 	var bf2 = rotate.New(context.Background(), cfg)
 	bf2.Add([]byte("house"))
 
-	err = client.Call("Bloomfilter.Union", bf_rpc.UnionInput{bf2}, &unionOutput)
+	err = client.Call("BloomfilterRPC.Union", bf_rpc.UnionInput{bf2}, &unionOutput)
 	if err != nil {
 		fmt.Printf("unexpected error: %s", err.Error())
 		return
 	}
 	fmt.Println(unionOutput.Capacity < 1e-6)
 
-	err = client.Call("Bloomfilter.Check", bf_rpc.CheckInput{elems2}, &checkOutput)
+	err = client.Call("BloomfilterRPC.Check", bf_rpc.CheckInput{elems2}, &checkOutput)
 	if err != nil {
 		fmt.Printf("unexpected error: %s", err.Error())
 		return
@@ -84,10 +82,10 @@ func ExampleIntegration() {
 	var bf3 = rotate.New(context.Background(), cfg)
 	bf3.Add([]byte("mouse"))
 
-	divCall = client.Go("Bloomfilter.Union", bf_rpc.UnionInput{bf3}, &unionOutput, nil)
+	divCall = client.Go("BloomfilterRPC.Union", bf_rpc.UnionInput{bf3}, &unionOutput, nil)
 	<-divCall.Done
 
-	err = client.Call("Bloomfilter.Check", bf_rpc.CheckInput{elems3}, &checkOutput)
+	err = client.Call("BloomfilterRPC.Check", bf_rpc.CheckInput{elems3}, &checkOutput)
 	if err != nil {
 		fmt.Printf("unexpected error: %s", err.Error())
 		return
