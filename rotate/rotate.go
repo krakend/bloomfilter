@@ -2,11 +2,13 @@ package rotate
 
 import (
 	"bytes"
+	"compress/gzip"
 	"context"
 	"crypto/rand"
 	"encoding/gob"
 	"errors"
 	"fmt"
+	"io"
 	"reflect"
 	"sync"
 	"time"
@@ -140,13 +142,15 @@ func (bs *Bloomfilter) MarshalBinary() ([]byte, error) {
 	defer bs.mutex.RUnlock()
 
 	buf := new(bytes.Buffer)
-	err := gob.NewEncoder(buf).Encode(SerializibleBloomfilter{
+	w := gzip.NewWriter(buf)
+	err := gob.NewEncoder(w).Encode(SerializibleBloomfilter{
 		Previous: bs.Previous,
 		Next:     bs.Next,
 		Current:  bs.Current,
 		Config:   bs.Config,
 	})
-	//zip buf.Bytes
+
+	w.Close()
 	return buf.Bytes(), err
 }
 
@@ -157,12 +161,15 @@ func (bs *Bloomfilter) UnmarshalBinary(data []byte) error {
 		bs.mutex.Lock()
 		defer bs.mutex.Unlock()
 	}
-	//unzip data
 
 	buf := bytes.NewBuffer(data)
-	target := &SerializibleBloomfilter{}
+	r, err := gzip.NewReader(buf)
+	if err != nil {
+		return err
+	}
 
-	if err := gob.NewDecoder(buf).Decode(target); err != nil {
+	target := &SerializibleBloomfilter{}
+	if err := gob.NewDecoder(r).Decode(target); err != nil && err != io.EOF {
 		return err
 	}
 
