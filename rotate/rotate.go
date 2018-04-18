@@ -102,7 +102,7 @@ func (bs *Bloomfilter) Union(that interface{}) (float64, error) {
 		return bs.capacity(), err
 	}
 
-	if _, err := bs.Current.Union(other.Next); err != nil {
+	if _, err := bs.Next.Union(other.Next); err != nil {
 		return bs.capacity(), err
 	}
 
