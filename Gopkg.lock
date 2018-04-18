@@ -3,6 +3,71 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/devopsfaith/krakend"
+  packages = [
+    "config",
+    "encoding",
+    "logging",
+    "sd",
+    "sd/dnssrv"
+  ]
+  revision = "8c69c03a022a7bfb9aace70745698c6b70435788"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/devopsfaith/krakend-gologging"
+  packages = ["."]
+  revision = "96e1a9d5f586cac9b6ddb5de999527d64630181c"
+
+[[projects]]
+  name = "github.com/go-contrib/uuid"
+  packages = ["."]
+  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
+  version = "v1.2.0"
+
+[[projects]]
+  name = "github.com/hashicorp/consul"
+  packages = ["api"]
+  revision = "fb848fc48818f58690db09d14640513aa6bf3c02"
+  version = "v1.0.7"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/hashicorp/go-cleanhttp"
+  packages = ["."]
+  revision = "d5fe4b57a186c716b0e00b8c301cbd9b4182694d"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/hashicorp/go-rootcerts"
+  packages = ["."]
+  revision = "6bb64b370b90e7ef1fa532be9e591a81c3493e00"
+
+[[projects]]
+  name = "github.com/hashicorp/serf"
+  packages = ["coordinate"]
+  revision = "d6574a5bb1226678d7010325fb6c985db20ee458"
+  version = "v0.8.1"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/letgoapp/krakend-consul"
+  packages = ["."]
+  revision = "b4d135ce6994ddd43d0d292e5bc2fc75baa1e9c9"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/mitchellh/go-homedir"
+  packages = ["."]
+  revision = "b8bc1bf767474819792c23f32d8286a45736f1c6"
+
+[[projects]]
+  name = "github.com/op/go-logging"
+  packages = ["."]
+  revision = "970db520ece77730c7e4724c61121037378659d9"
+
+[[projects]]
+  branch = "master"
   name = "github.com/tmthrgd/asm"
   packages = ["."]
   revision = "4be3ab5ca701563b932e93c3f3b58aad8b5ed230"
@@ -55,6 +120,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "bdee1a5ceb41a4d1f37619f30aa52151161654adb17a1a7adb71c4f974027d01"
+  inputs-digest = "ad8be8e2fdb081be0ad7e31e5374058362f08f4db7efc9370aac454904835181"
   solver-name = "gps-cdcl"
   solver-version = 1

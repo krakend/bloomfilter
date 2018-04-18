@@ -2,6 +2,7 @@ package krakend
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	gologging "github.com/devopsfaith/krakend-gologging"
@@ -9,11 +10,12 @@ import (
 	bloomfilter "github.com/letgoapp/go-bloomfilter"
 	"github.com/letgoapp/go-bloomfilter/rotate"
 	"github.com/letgoapp/go-bloomfilter/rpc"
+	consul "github.com/letgoapp/krakend-consul"
 )
 
 func TestRegister_ok(t *testing.T) {
 	ctx := context.Background()
-	cfg :=
+	cfgBloomFilter :=
 		rpc.Config{
 			Config: rotate.Config{
 				Config: bloomfilter.Config{
@@ -25,11 +27,25 @@ func TestRegister_ok(t *testing.T) {
 			},
 			Port: 1234,
 		}
+	cfgConsul := consul.Config{
+		Address: "127.0.0.1:8500",
+		Tags: []string{
+			"1224", "2233",
+		},
+		Port: 1234,
+		Name: "bloomfilter-test",
+	}
+
+	consulExtraConfig := config.ExtraConfig{
+		"github_com/letgoapp/krakend-consul": cfgConsul,
+	}
+
 	serviceConf := config.ServiceConfig{
-		ExtraConfig: config.ExtraConfig{
-			"github_com/letgoapp/go-bloomfilter": cfg,
+		ExtraConfig: map[string]interface{}{
+			"github_com/letgoapp/go-bloomfilter": cfgBloomFilter,
 		},
 	}
+
 	logger, err := gologging.NewLogger(config.ExtraConfig{
 		gologging.Namespace: map[string]interface{}{
 			"level":  "DEBUG",
@@ -41,15 +57,18 @@ func TestRegister_ok(t *testing.T) {
 		return
 	}
 
-	if _, err := Register(ctx, serviceConf, logger); err != nil {
+	if _, err := Register(ctx, "bloomfilter-test", serviceConf, logger, func(name string, port int) {
+		if err := consul.Register(ctx, consulExtraConfig, port, name, logger); err != nil {
+			logger.Error(fmt.Sprintf("Couldn't register %s:%d in consul: %s", name, port, err.Error()))
+		}
+	}); err != nil {
 		t.Errorf("got error when registering: %s", err.Error())
 	}
-
 }
 
 func TestRegister_koNamespace(t *testing.T) {
 	ctx := context.Background()
-	cfg :=
+	cfgBloomFilter :=
 		rpc.Config{
 			Config: rotate.Config{
 				Config: bloomfilter.Config{
@@ -63,7 +82,7 @@ func TestRegister_koNamespace(t *testing.T) {
 		}
 	serviceConf := config.ServiceConfig{
 		ExtraConfig: config.ExtraConfig{
-			"wrongnamespace": cfg,
+			"wrongnamespace": cfgBloomFilter,
 		},
 	}
 	logger, err := gologging.NewLogger(config.ExtraConfig{
@@ -77,8 +96,11 @@ func TestRegister_koNamespace(t *testing.T) {
 		return
 	}
 
-	if _, err := Register(ctx, serviceConf, logger); err != errNoConfig {
+	if _, err := Register(ctx, "bloomfilter-test", serviceConf, logger, func(name string, port int) {
+		if err := consul.Register(ctx, map[string]interface{}{}, port, name, logger); err != nil {
+			logger.Error(fmt.Sprintf("Couldn't register %s:%d in consul: %s", name, port, err.Error()))
+		}
+	}); err != errNoConfig {
 		t.Errorf("didn't get error %s", errNoConfig)
 	}
-
 }

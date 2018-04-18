@@ -19,7 +19,7 @@ var (
 	errWrongConfig = errors.New("invalid config for the bloomfilter")
 )
 
-func Register(ctx context.Context, cfg config.ServiceConfig, logger logging.Logger) (bloomfilter.Bloomfilter, error) {
+func Register(ctx context.Context, serviceName string, cfg config.ServiceConfig, logger logging.Logger, register func(n string, p int)) (bloomfilter.Bloomfilter, error) {
 	data, ok := cfg.ExtraConfig[Namespace]
 	if !ok {
 		logger.Info(errNoConfig.Error(), cfg.ExtraConfig)
@@ -38,5 +38,7 @@ func Register(ctx context.Context, cfg config.ServiceConfig, logger logging.Logg
 	}
 
 	bf := server.New(ctx, rpcConfig)
+	register(serviceName, rpcConfig.Port)
+
 	return bf.Bloomfilter(), nil
 }
