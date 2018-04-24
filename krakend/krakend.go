@@ -12,6 +12,7 @@ import (
 	"github.com/letgoapp/go-bloomfilter/rpc/server"
 )
 
+// Namespace for bloomfilter
 const Namespace = "github_com/letgoapp/go-bloomfilter"
 
 var (
@@ -19,12 +20,14 @@ var (
 	errWrongConfig = errors.New("invalid config for the bloomfilter")
 )
 
+// Register registers a bloomfilter given a config and registers the service with consul
 func Register(ctx context.Context, serviceName string, cfg config.ServiceConfig, logger logging.Logger, register func(n string, p int)) (bloomfilter.Bloomfilter, error) {
 	data, ok := cfg.ExtraConfig[Namespace]
 	if !ok {
 		logger.Info(errNoConfig.Error(), cfg.ExtraConfig)
 		return new(bloomfilter.EmptySet), errNoConfig
 	}
+
 	raw, err := json.Marshal(data)
 	if err != nil {
 		logger.Info(errWrongConfig.Error(), cfg.ExtraConfig)

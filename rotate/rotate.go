@@ -16,6 +16,8 @@ import (
 	bfilter "github.com/letgoapp/go-bloomfilter/bloomfilter"
 )
 
+// New creates a new sliding set of 3 bloomfilters
+// It uses a context and configuration
 func New(ctx context.Context, cfg Config) *Bloomfilter {
 	localCtx, cancel := context.WithCancel(ctx)
 	prevCfg := bloomfilter.EmptyConfig
@@ -34,11 +36,13 @@ func New(ctx context.Context, cfg Config) *Bloomfilter {
 	return r
 }
 
+// Config contains a bloomfilter config and the rotation frequency TTL in sec
 type Config struct {
 	bloomfilter.Config
 	TTL uint
 }
 
+// Bloomfilter type defines a sliding set of 3 bloomfilters
 type Bloomfilter struct {
 	Previous, Current, Next *bfilter.Bloomfilter
 	Config                  Config
@@ -47,12 +51,14 @@ type Bloomfilter struct {
 	cancel                  context.CancelFunc
 }
 
+// Close sliding set of bloomfilters
 func (bs *Bloomfilter) Close() {
 	if bs != nil && bs.cancel != nil {
 		bs.cancel()
 	}
 }
 
+// Add element to sliding set of bloomfilters
 func (bs *Bloomfilter) Add(elem []byte) {
 	bs.mutex.RLock()
 	defer bs.mutex.RUnlock()
@@ -61,6 +67,7 @@ func (bs *Bloomfilter) Add(elem []byte) {
 	bs.Current.Add(elem)
 }
 
+// Check if element in sliding set of bloomfilters
 func (bs *Bloomfilter) Check(elem []byte) bool {
 	bs.mutex.RLock()
 	defer bs.mutex.RUnlock()
@@ -68,6 +75,10 @@ func (bs *Bloomfilter) Check(elem []byte) bool {
 	return bs.Previous.Check(elem) || bs.Current.Check(elem)
 }
 
+// Union two sliding sets of bloomfilters
+// Take care that false positive probability P,
+// number of elements being filtered N and
+// hashfunctions are the same
 func (bs *Bloomfilter) Union(that interface{}) (float64, error) {
 	bs.mutex.RLock()
 	defer bs.mutex.RUnlock()
@@ -131,11 +142,14 @@ func (bs *Bloomfilter) keepRotating(ctx context.Context, c <-chan time.Time) {
 	}
 }
 
+// SerializibleBloomfilter used when (de)serializing a set of sliding bloomfilters
+// It has exportable fields
 type SerializibleBloomfilter struct {
 	Previous, Current, Next *bfilter.Bloomfilter
 	Config                  Config
 }
 
+// MarshalBinary serializes a set of sliding bloomfilters
 func (bs *Bloomfilter) MarshalBinary() ([]byte, error) {
 	bs.mutex.RLock()
 	defer bs.mutex.RUnlock()
@@ -153,6 +167,7 @@ func (bs *Bloomfilter) MarshalBinary() ([]byte, error) {
 	return buf.Bytes(), err
 }
 
+// MarshalBinary deserializes a set of sliding bloomfilters
 func (bs *Bloomfilter) UnmarshalBinary(data []byte) error {
 	if bs != nil && bs.cancel != nil {
 		bs.cancel()

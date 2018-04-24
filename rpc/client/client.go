@@ -9,10 +9,12 @@ import (
 	rpc_bf "github.com/letgoapp/go-bloomfilter/rpc"
 )
 
+// Bloomfilter rpc client type
 type Bloomfilter struct {
 	client *rpc.Client
 }
 
+// New creates a new bloomfilter rpc client with address
 func New(address string) (*Bloomfilter, error) {
 	client, err := rpc.Dial("tcp", address)
 	if err != nil {
@@ -21,6 +23,7 @@ func New(address string) (*Bloomfilter, error) {
 	return &Bloomfilter{client}, nil
 }
 
+// Add element through bloomfilter rpc client
 func (b *Bloomfilter) Add(elem []byte) {
 	var addOutput rpc_bf.AddOutput
 	if err := b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{[][]byte{elem}}, &addOutput); err != nil {
@@ -28,6 +31,7 @@ func (b *Bloomfilter) Add(elem []byte) {
 	}
 }
 
+// Check present element through bloomfilter rpc client
 func (b *Bloomfilter) Check(elem []byte) bool {
 	var checkOutput rpc_bf.CheckOutput
 	if err := b.client.Call("BloomfilterRPC.Check", rpc_bf.CheckInput{[][]byte{elem}}, &checkOutput); err != nil {
@@ -42,6 +46,7 @@ func (b *Bloomfilter) Check(elem []byte) bool {
 	return true
 }
 
+// Union element through bloomfilter rpc client with sliding bloomfilters
 func (b *Bloomfilter) Union(that interface{}) (float64, error) {
 	v, ok := that.(*rotate.Bloomfilter)
 	if !ok {
@@ -56,6 +61,7 @@ func (b *Bloomfilter) Union(that interface{}) (float64, error) {
 	return unionOutput.Capacity, nil
 }
 
+// Close bloomfilter rpc client
 func (b *Bloomfilter) Close() {
 	b.client.Close()
 }

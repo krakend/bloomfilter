@@ -5,23 +5,28 @@ import (
 	"github.com/tmthrgd/go-bitset"
 )
 
+// BitSet type cotains library bitset and hasher function
 type BitSet struct {
 	bs     bitset.Bitset
 	hasher bloomfilter.Hash
 }
 
+// NewBitSet constructor for BitSet with an array of m bits
 func NewBitSet(m uint) *BitSet {
 	return &BitSet{bitset.New(m), bloomfilter.MD5}
 }
 
+// Add element to bitset
 func (bs *BitSet) Add(elem []byte) {
 	bs.bs.Set(bs.hasher(elem)[0] % bs.bs.Len())
 }
 
+// Check element in bitset
 func (bs *BitSet) Check(elem []byte) bool {
 	return bs.bs.IsSet(bs.hasher(elem)[0] % bs.bs.Len())
 }
 
+// Union of two bitsets
 func (bs *BitSet) Union(that interface{}) (float64, error) {
 	other, ok := that.(*BitSet)
 	if !ok {

@@ -9,6 +9,10 @@ import (
 	"github.com/tmthrgd/go-bitset"
 )
 
+// Bloomfilter type
+// It is defined by a bitset of m bits
+// k hashfunctions and
+// configuration
 type Bloomfilter struct {
 	bs  bitset.Bitset
 	m   uint
@@ -17,6 +21,7 @@ type Bloomfilter struct {
 	cfg bfilter.Config
 }
 
+// New creates a new bloomfilter, from config
 func New(cfg bfilter.Config) *Bloomfilter {
 	m := bfilter.M(cfg.N, cfg.P)
 	k := bfilter.K(m, cfg.N)
@@ -29,6 +34,7 @@ func New(cfg bfilter.Config) *Bloomfilter {
 	}
 }
 
+// Add element to bloomfilter
 func (b Bloomfilter) Add(elem []byte) {
 	for _, h := range b.h {
 		for _, x := range h(elem) {
@@ -37,6 +43,7 @@ func (b Bloomfilter) Add(elem []byte) {
 	}
 }
 
+// Check element in bloomfilter
 func (b Bloomfilter) Check(elem []byte) bool {
 	for _, h := range b.h {
 		for _, x := range h(elem) {
@@ -48,6 +55,7 @@ func (b Bloomfilter) Check(elem []byte) bool {
 	return true
 }
 
+// Union of two bloomfilters
 func (b *Bloomfilter) Union(that interface{}) (float64, error) {
 	other, ok := that.(*Bloomfilter)
 	if !ok {
@@ -67,6 +75,8 @@ func (b *Bloomfilter) Union(that interface{}) (float64, error) {
 	return b.Capacity(), nil
 }
 
+// SerializibleBloomfilter used when (de)serializing a bloomfilter
+// It has exportable fields
 type SerializibleBloomfilter struct {
 	BS       bitset.Bitset
 	M        uint
@@ -75,6 +85,7 @@ type SerializibleBloomfilter struct {
 	Cfg      bfilter.Config
 }
 
+// MarshalBinary serializes a bloomfilter
 func (bs *Bloomfilter) MarshalBinary() ([]byte, error) {
 	buf := new(bytes.Buffer)
 	err := gob.NewEncoder(buf).Encode(&SerializibleBloomfilter{
@@ -89,6 +100,7 @@ func (bs *Bloomfilter) MarshalBinary() ([]byte, error) {
 	return buf.Bytes(), err
 }
 
+// MarshalBinary deserializes a bloomfilter
 func (bs *Bloomfilter) UnmarshalBinary(data []byte) error {
 	//unzip data
 	buf := bytes.NewBuffer(data)
@@ -108,10 +120,12 @@ func (bs *Bloomfilter) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
+// Capacity returns the fill degree of the bloomfilter
 func (bs *Bloomfilter) Capacity() float64 {
 	return float64(bs.bs.Count()) / float64(bs.m)
 }
 
+// HashFactoryNameK returns the hashfunction given by name
 func (bs *Bloomfilter) HashFactoryNameK(hashName string) []bfilter.Hash {
 	return bfilter.HashFactoryNames[hashName](bs.k)
 }

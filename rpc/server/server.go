@@ -9,6 +9,7 @@ import (
 	rpc_bf "github.com/letgoapp/go-bloomfilter/rpc"
 )
 
+// New creates an rpc bloomfilter and launches a serving goroutine
 func New(ctx context.Context, cfg rpc_bf.Config) *rpc_bf.Bloomfilter {
 	bf := rpc_bf.New(ctx, cfg)
 
@@ -17,6 +18,10 @@ func New(ctx context.Context, cfg rpc_bf.Config) *rpc_bf.Bloomfilter {
 	return bf
 }
 
+// Serve creates an rpc server,
+// registers a bloomfilter,
+// accepts a tcp listener and
+// and closes when catching context done
 func Serve(ctx context.Context, port int, bf *rpc_bf.Bloomfilter) {
 	s := rpc.NewServer()
 
