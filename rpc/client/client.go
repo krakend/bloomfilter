@@ -1,3 +1,4 @@
+// Package client implements an rpc client for the bloomfilter, along with Add and Check methods.
 package client
 
 import (

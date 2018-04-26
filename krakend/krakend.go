@@ -1,3 +1,4 @@
+// Package krakend registers a bloomfilter given a config and registers the service with consul.
 package krakend
 
 import (
@@ -7,7 +8,7 @@ import (
 
 	"github.com/devopsfaith/krakend/config"
 	"github.com/devopsfaith/krakend/logging"
-	bloomfilter "github.com/letgoapp/go-bloomfilter"
+	"github.com/letgoapp/go-bloomfilter"
 	bf_rpc "github.com/letgoapp/go-bloomfilter/rpc"
 	"github.com/letgoapp/go-bloomfilter/rpc/server"
 )
@@ -21,7 +22,8 @@ var (
 )
 
 // Register registers a bloomfilter given a config and registers the service with consul
-func Register(ctx context.Context, serviceName string, cfg config.ServiceConfig, logger logging.Logger, register func(n string, p int)) (bloomfilter.Bloomfilter, error) {
+func Register(
+	ctx context.Context, serviceName string, cfg config.ServiceConfig, logger logging.Logger, register func(n string, p int)) (bloomfilter.Bloomfilter, error) {
 	data, ok := cfg.ExtraConfig[Namespace]
 	if !ok {
 		logger.Info(errNoConfig.Error(), cfg.ExtraConfig)

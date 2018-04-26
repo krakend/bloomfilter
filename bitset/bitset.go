@@ -1,3 +1,6 @@
+// Package bitset implements a bitset based on the bitset library.
+//
+// It aggregates a hashfunction and implements the Add, Check and Union methods.
 package bitset
 
 import (

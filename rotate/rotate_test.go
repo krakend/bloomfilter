@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/letgoapp/go-bloomfilter"
-	bfilter "github.com/letgoapp/go-bloomfilter/bloomfilter"
+	"github.com/letgoapp/go-bloomfilter/bloomfilter"
 	"github.com/letgoapp/go-bloomfilter/testutils"
 )
 
@@ -80,8 +80,7 @@ func TestRotate_Union_koDifferentHashFuncsBFs(t *testing.T) {
 	defer cancel()
 
 	set1 := New(ctx, Config{testutils.TestCfg, 5})
-	set2 := New(ctx, Config{testutils.TestCfg, 5})
-	set2.Config.HashName = bloomfilter.HASHER_DEFAULT
+	set2 := New(ctx, Config{testutils.TestCfg3, 5})
 	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: different hashers") {
 		t.Errorf("Unexpected error, %v", err)
 	}
@@ -126,9 +125,9 @@ func TestRotate_KeepRotating(t *testing.T) {
 	dt := 5 * time.Millisecond
 
 	rotate := &Bloomfilter{
-		Previous: bfilter.New(testutils.TestCfg),
-		Current:  bfilter.New(testutils.TestCfg),
-		Next:     bfilter.New(testutils.TestCfg),
+		Previous: baseBloomfilter.New(testutils.TestCfg),
+		Current:  baseBloomfilter.New(testutils.TestCfg),
+		Next:     baseBloomfilter.New(testutils.TestCfg),
 		Config:   Config{testutils.TestCfg, 5},
 		cancel:   cancel,
 		mutex:    &sync.RWMutex{},

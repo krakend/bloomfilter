@@ -1,3 +1,4 @@
+// Server application that registers a bloomfilter by means of an rpc.
 package main
 
 import (

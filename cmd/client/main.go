@@ -1,3 +1,13 @@
+// Client application that reads from keyboard add and checks operations with data to store to a bloomfilter by means of an rpc
+// until pressing ctrl-c.
+//
+// It needs the server to be started.
+//
+// Example:
+//
+// add data1
+//
+// check data1
 package main
 
 import (

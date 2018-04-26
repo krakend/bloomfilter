@@ -1,3 +1,4 @@
+// Package testutils contains utils for the tests.
 package testutils
 
 import (
@@ -17,6 +18,12 @@ var (
 		N:        100,
 		P:        0.00001,
 		HashName: bloomfilter.HASHER_OPTIMAL,
+	}
+
+	TestCfg3 = bloomfilter.Config{
+		N:        100,
+		P:        0.001,
+		HashName: bloomfilter.HASHER_DEFAULT,
 	}
 )
 

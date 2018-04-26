@@ -1,3 +1,4 @@
+// Package server implements an rpc server for the bloomfilter, registering a bloomfilter and accepting a tcp listener.
 package server
 
 import (
@@ -18,10 +19,7 @@ func New(ctx context.Context, cfg rpc_bf.Config) *rpc_bf.Bloomfilter {
 	return bf
 }
 
-// Serve creates an rpc server,
-// registers a bloomfilter,
-// accepts a tcp listener and
-// and closes when catching context done
+// Serve creates an rpc server, registers a bloomfilter, accepts a tcp listener and closes when catching context done
 func Serve(ctx context.Context, port int, bf *rpc_bf.Bloomfilter) {
 	s := rpc.NewServer()
 

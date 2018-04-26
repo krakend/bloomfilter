@@ -1,4 +1,4 @@
-package bloomfilter
+package baseBloomfilter
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	bfilter "github.com/letgoapp/go-bloomfilter"
+	"github.com/letgoapp/go-bloomfilter"
 	"github.com/letgoapp/go-bloomfilter/testutils"
 )
 
@@ -25,7 +25,7 @@ func TestBloomfilter_Union_koIncorrectType(t *testing.T) {
 	set1 := New(testutils.TestCfg)
 	set2 := 24
 
-	if _, err := set1.Union(set2); err != bfilter.ErrImpossibleToTreat {
+	if _, err := set1.Union(set2); err != bloomfilter.ErrImpossibleToTreat {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }

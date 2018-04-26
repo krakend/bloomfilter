@@ -1,3 +1,4 @@
+// Package rpc implements the rpc layer for the bloomfilter, following the principles from https://golang.org/pkg/net/rpc
 package rpc
 
 import (

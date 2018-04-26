@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"testing"
 
-	gologging "github.com/devopsfaith/krakend-gologging"
+	"github.com/devopsfaith/krakend-gologging"
 	"github.com/devopsfaith/krakend/config"
-	bloomfilter "github.com/letgoapp/go-bloomfilter"
+	"github.com/letgoapp/go-bloomfilter"
 	"github.com/letgoapp/go-bloomfilter/rotate"
 	"github.com/letgoapp/go-bloomfilter/rpc"
-	consul "github.com/letgoapp/krakend-consul"
+	"github.com/letgoapp/krakend-consul"
 )
 
 func TestRegister_ok(t *testing.T) {

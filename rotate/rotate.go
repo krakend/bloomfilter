@@ -1,19 +1,20 @@
+// Package rotate implemennts a sliding set of three bloomfilters: `previous`, `current` and `next` and the bloomfilter interface.
+//
+// When adding an element, it is stored in the `current` and `next` bloomfilters.
+// When sliding (rotating), `current` passes to `previous` and `next` to `current`.
 package rotate
 
 import (
 	"bytes"
 	"context"
-	"crypto/rand"
 	"encoding/gob"
-	"errors"
 	"fmt"
 	"io"
-	"reflect"
 	"sync"
 	"time"
 
 	"github.com/letgoapp/go-bloomfilter"
-	bfilter "github.com/letgoapp/go-bloomfilter/bloomfilter"
+	"github.com/letgoapp/go-bloomfilter/bloomfilter"
 )
 
 // New creates a new sliding set of 3 bloomfilters
@@ -23,9 +24,9 @@ func New(ctx context.Context, cfg Config) *Bloomfilter {
 	prevCfg := bloomfilter.EmptyConfig
 	prevCfg.HashName = cfg.HashName
 	r := &Bloomfilter{
-		Previous: bfilter.New(prevCfg),
-		Current:  bfilter.New(cfg.Config),
-		Next:     bfilter.New(cfg.Config),
+		Previous: baseBloomfilter.New(prevCfg),
+		Current:  baseBloomfilter.New(cfg.Config),
+		Next:     baseBloomfilter.New(cfg.Config),
 		Config:   cfg,
 		cancel:   cancel,
 		mutex:    &sync.RWMutex{},
@@ -44,7 +45,7 @@ type Config struct {
 
 // Bloomfilter type defines a sliding set of 3 bloomfilters
 type Bloomfilter struct {
-	Previous, Current, Next *bfilter.Bloomfilter
+	Previous, Current, Next *baseBloomfilter.Bloomfilter
 	Config                  Config
 	mutex                   *sync.RWMutex
 	ctx                     context.Context
@@ -95,16 +96,6 @@ func (bs *Bloomfilter) Union(that interface{}) (float64, error) {
 		return bs.capacity(), fmt.Errorf("error: diferrent p values %.2f vs. %.2f", other.Config.P, bs.Config.P)
 	}
 
-	hf0 := bs.Next.HashFactoryNameK(bs.Config.HashName)
-	hf1 := bs.Next.HashFactoryNameK(other.Config.HashName)
-	subject := make([]byte, 1000)
-	rand.Read(subject)
-	for i, f := range hf0 {
-		if !reflect.DeepEqual(f(subject), hf1[i](subject)) {
-			return bs.capacity(), errors.New("error: different hashers")
-		}
-	}
-
 	if _, err := bs.Previous.Union(other.Previous); err != nil {
 		return bs.capacity(), err
 	}
@@ -132,7 +123,7 @@ func (bs *Bloomfilter) keepRotating(ctx context.Context, c <-chan time.Time) {
 
 		bs.Previous = bs.Current
 		bs.Current = bs.Next
-		bs.Next = bfilter.New(bloomfilter.Config{
+		bs.Next = baseBloomfilter.New(bloomfilter.Config{
 			N:        bs.Config.N,
 			P:        bs.Config.P,
 			HashName: bs.Config.HashName,
@@ -145,7 +136,7 @@ func (bs *Bloomfilter) keepRotating(ctx context.Context, c <-chan time.Time) {
 // SerializibleBloomfilter used when (de)serializing a set of sliding bloomfilters
 // It has exportable fields
 type SerializibleBloomfilter struct {
-	Previous, Current, Next *bfilter.Bloomfilter
+	Previous, Current, Next *baseBloomfilter.Bloomfilter
 	Config                  Config
 }
 
