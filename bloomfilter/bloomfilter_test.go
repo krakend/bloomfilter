@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/letgoapp/go-bloomfilter"
-	"github.com/letgoapp/go-bloomfilter/testutils"
+	"github.com/devopsfaith/bloomfilter"
+	"github.com/devopsfaith/bloomfilter/testutils"
 )
 
 func TestBloomfilter(t *testing.T) {

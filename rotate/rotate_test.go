@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/letgoapp/go-bloomfilter"
-	"github.com/letgoapp/go-bloomfilter/bloomfilter"
-	"github.com/letgoapp/go-bloomfilter/testutils"
+	"github.com/devopsfaith/bloomfilter"
+	"github.com/devopsfaith/bloomfilter/bloomfilter"
+	"github.com/devopsfaith/bloomfilter/testutils"
 )
 
 func TestRotate_Union_ok(t *testing.T) {

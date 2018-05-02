@@ -7,9 +7,9 @@ import (
 
 	"github.com/devopsfaith/krakend-gologging"
 	"github.com/devopsfaith/krakend/config"
-	"github.com/letgoapp/go-bloomfilter"
-	"github.com/letgoapp/go-bloomfilter/rotate"
-	"github.com/letgoapp/go-bloomfilter/rpc"
+	"github.com/devopsfaith/bloomfilter"
+	"github.com/devopsfaith/bloomfilter/rotate"
+	"github.com/devopsfaith/bloomfilter/rpc"
 	"github.com/letgoapp/krakend-consul"
 )
 
@@ -42,7 +42,7 @@ func TestRegister_ok(t *testing.T) {
 
 	serviceConf := config.ServiceConfig{
 		ExtraConfig: map[string]interface{}{
-			"github_com/letgoapp/go-bloomfilter": cfgBloomFilter,
+			"github_com/devopsfaith/bloomfilter": cfgBloomFilter,
 		},
 	}
 

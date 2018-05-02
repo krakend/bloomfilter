@@ -7,7 +7,7 @@ import (
 	"net"
 	"net/rpc"
 
-	rpc_bf "github.com/letgoapp/go-bloomfilter/rpc"
+	rpc_bf "github.com/devopsfaith/bloomfilter/rpc"
 )
 
 // New creates an rpc bloomfilter and launches a serving goroutine

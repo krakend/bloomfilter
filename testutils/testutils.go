@@ -4,7 +4,7 @@ package testutils
 import (
 	"testing"
 
-	"github.com/letgoapp/go-bloomfilter"
+	"github.com/devopsfaith/bloomfilter"
 )
 
 var (

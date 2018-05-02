@@ -9,10 +9,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/letgoapp/go-bloomfilter"
-	"github.com/letgoapp/go-bloomfilter/rotate"
-	"github.com/letgoapp/go-bloomfilter/rpc"
-	"github.com/letgoapp/go-bloomfilter/rpc/server"
+	"github.com/devopsfaith/bloomfilter"
+	"github.com/devopsfaith/bloomfilter/rotate"
+	"github.com/devopsfaith/bloomfilter/rpc"
+	"github.com/devopsfaith/bloomfilter/rpc/server"
 )
 
 func main() {
