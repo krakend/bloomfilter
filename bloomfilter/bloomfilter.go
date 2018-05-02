@@ -14,7 +14,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/letgoapp/go-bloomfilter"
+	"github.com/devopsfaith/bloomfilter"
 	"github.com/tmthrgd/go-bitset"
 )
 

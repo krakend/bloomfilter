@@ -8,13 +8,13 @@ import (
 
 	"github.com/devopsfaith/krakend/config"
 	"github.com/devopsfaith/krakend/logging"
-	"github.com/letgoapp/go-bloomfilter"
-	bf_rpc "github.com/letgoapp/go-bloomfilter/rpc"
-	"github.com/letgoapp/go-bloomfilter/rpc/server"
+	"github.com/devopsfaith/bloomfilter"
+	bf_rpc "github.com/devopsfaith/bloomfilter/rpc"
+	"github.com/devopsfaith/bloomfilter/rpc/server"
 )
 
 // Namespace for bloomfilter
-const Namespace = "github_com/letgoapp/go-bloomfilter"
+const Namespace = "github_com/devopsfaith/bloomfilter"
 
 var (
 	errNoConfig    = errors.New("no config for the bloomfilter")

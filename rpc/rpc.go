@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/letgoapp/go-bloomfilter/rotate"
+	"github.com/devopsfaith/bloomfilter/rotate"
 )
 
 // Config type containing a sliding bloomfilter set and a port

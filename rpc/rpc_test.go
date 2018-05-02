@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/letgoapp/go-bloomfilter/rotate"
-	"github.com/letgoapp/go-bloomfilter/testutils"
+	"github.com/devopsfaith/bloomfilter/rotate"
+	"github.com/devopsfaith/bloomfilter/testutils"
 )
 
 func TestBFAdd_ok(t *testing.T) {

@@ -17,7 +17,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/letgoapp/go-bloomfilter/rpc/client"
+	"github.com/devopsfaith/bloomfilter/rpc/client"
 )
 
 func main() {

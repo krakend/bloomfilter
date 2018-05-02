@@ -13,8 +13,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/letgoapp/go-bloomfilter"
-	"github.com/letgoapp/go-bloomfilter/bloomfilter"
+	"github.com/devopsfaith/bloomfilter"
+	"github.com/devopsfaith/bloomfilter/bloomfilter"
 )
 
 // New creates a new sliding set of 3 bloomfilters

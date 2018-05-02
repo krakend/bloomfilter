@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/rpc"
 
-	"github.com/letgoapp/go-bloomfilter"
-	"github.com/letgoapp/go-bloomfilter/rotate"
+	"github.com/devopsfaith/bloomfilter"
+	"github.com/devopsfaith/bloomfilter/rotate"
 )
 
 func Example_integration() {
