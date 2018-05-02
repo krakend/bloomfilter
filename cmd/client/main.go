@@ -12,6 +12,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"log"
 	"os"
 	"strings"
@@ -20,7 +21,10 @@ import (
 )
 
 func main() {
-	c, err := client.New(":1234")
+	server := flag.String("server", "127.0.0.1:1234", "ip:port of the remote bloomfilter to connect to")
+	flag.Parse()
+
+	c, err := client.New(*server)
 	if err != nil {
 		log.Println("unable to create the rpc client:", err.Error())
 		return
