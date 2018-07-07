@@ -30,9 +30,8 @@ type Config struct {
 }
 
 // Register registers a bloomfilter given a config and registers the service with consul
-func Register(
-	ctx context.Context, serviceName string, cfg config.ServiceConfig, logger logging.Logger,
-	register func(n string, p int)) (Rejecter, error) {
+func Register(ctx context.Context, serviceName string, cfg config.ServiceConfig,
+	logger logging.Logger, register func(n string, p int)) (Rejecter, error) {
 	data, ok := cfg.ExtraConfig[Namespace]
 	if !ok {
 		logger.Info(errNoConfig.Error(), cfg.ExtraConfig)
@@ -56,7 +55,7 @@ func Register(
 
 	return Rejecter{
 		BF:        bf.Bloomfilter(),
-		TokenKeys: rpcConfig.Keys,
+		TokenKeys: rpcConfig.TokenKeys,
 		Headers:   rpcConfig.Headers,
 	}, nil
 }
