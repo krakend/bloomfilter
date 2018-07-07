@@ -5,18 +5,18 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/devopsfaith/krakend-gologging"
-	"github.com/devopsfaith/krakend/config"
 	"github.com/devopsfaith/bloomfilter"
 	"github.com/devopsfaith/bloomfilter/rotate"
 	"github.com/devopsfaith/bloomfilter/rpc"
-	"github.com/letgoapp/krakend-consul"
+	"github.com/devopsfaith/krakend-gologging"
+	"github.com/devopsfaith/krakend/config"
+	consul "github.com/letgoapp/krakend-consul"
 )
 
 func TestRegister_ok(t *testing.T) {
 	ctx := context.Background()
-	cfgBloomFilter :=
-		rpc.Config{
+	cfgBloomFilter := Config{
+		Config: rpc.Config{
 			Config: rotate.Config{
 				Config: bloomfilter.Config{
 					N:        10000000,
@@ -26,7 +26,8 @@ func TestRegister_ok(t *testing.T) {
 				TTL: 1500,
 			},
 			Port: 1234,
-		}
+		},
+	}
 	cfgConsul := consul.Config{
 		Address: "127.0.0.1:8500",
 		Tags: []string{
@@ -68,8 +69,8 @@ func TestRegister_ok(t *testing.T) {
 
 func TestRegister_koNamespace(t *testing.T) {
 	ctx := context.Background()
-	cfgBloomFilter :=
-		rpc.Config{
+	cfgBloomFilter := Config{
+		Config: rpc.Config{
 			Config: rotate.Config{
 				Config: bloomfilter.Config{
 					N:        10000000,
@@ -79,7 +80,8 @@ func TestRegister_koNamespace(t *testing.T) {
 				TTL: 1500,
 			},
 			Port: 1234,
-		}
+		},
+	}
 	serviceConf := config.ServiceConfig{
 		ExtraConfig: config.ExtraConfig{
 			"wrongnamespace": cfgBloomFilter,
