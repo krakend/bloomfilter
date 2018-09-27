@@ -5,12 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/http"
 
-	"github.com/devopsfaith/krakend/config"
-	"github.com/devopsfaith/krakend/logging"
 	"github.com/devopsfaith/bloomfilter"
 	bf_rpc "github.com/devopsfaith/bloomfilter/rpc"
 	"github.com/devopsfaith/bloomfilter/rpc/server"
+	"github.com/devopsfaith/krakend/config"
+	"github.com/devopsfaith/krakend/logging"
 )
 
 // Namespace for bloomfilter
@@ -21,29 +22,78 @@ var (
 	errWrongConfig = errors.New("invalid config for the bloomfilter")
 )
 
+// Config defines the configuration to be added to the KrakenD gateway
+type Config struct {
+	bf_rpc.Config
+	TokenKeys []string
+	Headers   []string
+}
+
 // Register registers a bloomfilter given a config and registers the service with consul
-func Register(
-	ctx context.Context, serviceName string, cfg config.ServiceConfig, logger logging.Logger, register func(n string, p int)) (bloomfilter.Bloomfilter, error) {
+func Register(ctx context.Context, serviceName string, cfg config.ServiceConfig,
+	logger logging.Logger, register func(n string, p int)) (Rejecter, error) {
 	data, ok := cfg.ExtraConfig[Namespace]
 	if !ok {
 		logger.Info(errNoConfig.Error(), cfg.ExtraConfig)
-		return new(bloomfilter.EmptySet), errNoConfig
+		return nopRejecter, errNoConfig
 	}
 
 	raw, err := json.Marshal(data)
 	if err != nil {
 		logger.Info(errWrongConfig.Error(), cfg.ExtraConfig)
-		return new(bloomfilter.EmptySet), errWrongConfig
+		return nopRejecter, errWrongConfig
 	}
 
-	var rpcConfig bf_rpc.Config
+	var rpcConfig Config
 	if err := json.Unmarshal(raw, &rpcConfig); err != nil {
 		logger.Info(err.Error(), string(raw))
-		return new(bloomfilter.EmptySet), err
+		return nopRejecter, err
 	}
 
-	bf := server.New(ctx, rpcConfig)
+	bf := server.New(ctx, rpcConfig.Config)
 	register(serviceName, rpcConfig.Port)
 
-	return bf.Bloomfilter(), nil
+	return Rejecter{
+		BF:        bf.Bloomfilter(),
+		TokenKeys: rpcConfig.TokenKeys,
+		Headers:   rpcConfig.Headers,
+	}, nil
 }
+
+type Rejecter struct {
+	BF        bloomfilter.Bloomfilter
+	TokenKeys []string
+	Headers   []string
+}
+
+func (r *Rejecter) RejectToken(claims map[string]interface{}) bool {
+	for _, k := range r.TokenKeys {
+		v, ok := claims[k]
+		if !ok {
+			continue
+		}
+		data, ok := v.(string)
+		if !ok {
+			continue
+		}
+		if r.BF.Check([]byte(k + "-" + data)) {
+			return true
+		}
+	}
+	return false
+}
+
+func (r *Rejecter) RejectHeader(header http.Header) bool {
+	for _, k := range r.Headers {
+		data := header.Get(k)
+		if data == "" {
+			continue
+		}
+		if r.BF.Check([]byte(k + "-" + data)) {
+			return true
+		}
+	}
+	return false
+}
+
+var nopRejecter = Rejecter{BF: new(bloomfilter.EmptySet)}
