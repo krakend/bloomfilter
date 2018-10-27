@@ -139,11 +139,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:7855ffbc876650c1beab776feed3a41c1988f94610fc0fe0e734ece202387126"
+  digest = "1:b349eae597139e655dd4950dc410758e14e00a235ae4889aa84cc5f1614a07b1"
   name = "github.com/tmthrgd/go-memset"
   packages = ["."]
   pruneopts = "UT"
-  revision = "7cfc73a3a28b4a6d6bd2a40dc00268ae6afe66be"
+  revision = "6f4e59bf1e1d4c209adeb0b158ab0411e0d5dc89"
 
 [[projects]]
   branch = "master"
