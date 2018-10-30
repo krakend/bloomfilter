@@ -34,19 +34,19 @@ func Register(ctx context.Context, serviceName string, cfg config.ServiceConfig,
 	logger logging.Logger, register func(n string, p int)) (Rejecter, error) {
 	data, ok := cfg.ExtraConfig[Namespace]
 	if !ok {
-		logger.Info(errNoConfig.Error(), cfg.ExtraConfig)
+		logger.Debug(errNoConfig.Error())
 		return nopRejecter, errNoConfig
 	}
 
 	raw, err := json.Marshal(data)
 	if err != nil {
-		logger.Info(errWrongConfig.Error(), cfg.ExtraConfig)
+		logger.Debug(errWrongConfig.Error())
 		return nopRejecter, errWrongConfig
 	}
 
 	var rpcConfig Config
 	if err := json.Unmarshal(raw, &rpcConfig); err != nil {
-		logger.Info(err.Error(), string(raw))
+		logger.Debug(err.Error(), string(raw))
 		return nopRejecter, err
 	}
 
