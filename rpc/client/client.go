@@ -25,26 +25,38 @@ func New(address string) (*Bloomfilter, error) {
 }
 
 // Add element through bloomfilter rpc client
-func (b *Bloomfilter) Add(elem []byte) {
+func (b *Bloomfilter) Add(elem []byte) error {
 	var addOutput rpc_bf.AddOutput
 	if err := b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{[][]byte{elem}}, &addOutput); err != nil {
 		fmt.Println("error on adding bloomfilter:", err.Error())
+		return err
 	}
+	return nil
+}
+
+// Add element through bloomfilter rpc client
+func (b *Bloomfilter) AddBatch(batch [][]byte) error {
+	var addOutput rpc_bf.AddOutput
+	if err := b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{batch}, &addOutput); err != nil {
+		fmt.Println("error on adding bloomfilter:", err.Error())
+		return err
+	}
+	return nil
 }
 
 // Check present element through bloomfilter rpc client
-func (b *Bloomfilter) Check(elem []byte) bool {
+func (b *Bloomfilter) Check(elem []byte) (bool, error) {
 	var checkOutput rpc_bf.CheckOutput
 	if err := b.client.Call("BloomfilterRPC.Check", rpc_bf.CheckInput{[][]byte{elem}}, &checkOutput); err != nil {
 		fmt.Println("error on check bloomfilter:", err.Error())
-		return false
+		return false, err
 	}
 	for _, v := range checkOutput.Checks {
 		if !v {
-			return false
+			return false, nil
 		}
 	}
-	return true
+	return true, nil
 }
 
 // Union element through bloomfilter rpc client with sliding bloomfilters
