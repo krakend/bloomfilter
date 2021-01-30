@@ -45,9 +45,15 @@ func main() {
 		parts := strings.Split(string(line), " ")
 		switch parts[0] {
 		case "add":
-			c.Add([]byte(strings.Join(parts[1:], " ")))
+			if err := c.Add([]byte(strings.Join(parts[1:], " "))); err != nil {
+				log.Printf("error processing the cmd: %s", err.Error())
+			}
 		case "check":
-			ok := c.Check([]byte(strings.Join(parts[1:], " ")))
+			ok, err := c.Check([]byte(strings.Join(parts[1:], " ")))
+			if err != nil {
+				log.Printf("error processing the cmd: %s", err.Error())
+				continue
+			}
 			log.Printf("%v", ok)
 		default:
 			log.Println("unknown command")

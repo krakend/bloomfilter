@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
 	"os"
 	"os/signal"
@@ -16,6 +17,9 @@ import (
 )
 
 func main() {
+	port := flag.Int("p", 1234, "the port to listen on")
+	flag.Parse()
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -31,7 +35,7 @@ func main() {
 			},
 			1000,
 		},
-		1234,
+		*port,
 	}
 	bf := server.New(ctx, cfg)
 	for {
