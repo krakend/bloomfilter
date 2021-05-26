@@ -8,9 +8,9 @@ import (
 	"github.com/devopsfaith/bloomfilter"
 	"github.com/devopsfaith/bloomfilter/rotate"
 	"github.com/devopsfaith/bloomfilter/rpc"
-	"github.com/devopsfaith/krakend-gologging"
-	"github.com/devopsfaith/krakend/config"
-	consul "github.com/letgoapp/krakend-consul"
+	consul "github.com/devopsfaith/krakend-consul"
+	gologging "github.com/devopsfaith/krakend-gologging"
+	"github.com/luraproject/lura/config"
 )
 
 func TestRegister_ok(t *testing.T) {

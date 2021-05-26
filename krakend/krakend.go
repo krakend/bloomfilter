@@ -10,8 +10,8 @@ import (
 	"github.com/devopsfaith/bloomfilter"
 	bf_rpc "github.com/devopsfaith/bloomfilter/rpc"
 	"github.com/devopsfaith/bloomfilter/rpc/server"
-	"github.com/devopsfaith/krakend/config"
-	"github.com/devopsfaith/krakend/logging"
+	"github.com/luraproject/lura/config"
+	"github.com/luraproject/lura/logging"
 )
 
 // Namespace for bloomfilter
