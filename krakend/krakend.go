@@ -7,11 +7,11 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/devopsfaith/bloomfilter"
-	bf_rpc "github.com/devopsfaith/bloomfilter/rpc"
-	"github.com/devopsfaith/bloomfilter/rpc/server"
-	"github.com/luraproject/lura/config"
-	"github.com/luraproject/lura/logging"
+	"github.com/devopsfaith/bloomfilter/v2"
+	bf_rpc "github.com/devopsfaith/bloomfilter/v2/rpc"
+	"github.com/devopsfaith/bloomfilter/v2/rpc/server"
+	"github.com/luraproject/lura/v2/config"
+	"github.com/luraproject/lura/v2/logging"
 )
 
 // Namespace for bloomfilter
@@ -29,7 +29,7 @@ type Config struct {
 	Headers   []string
 }
 
-// Register registers a bloomfilter given a config and registers the service with consul
+// Registers a bloomfilter given a config
 func Register(ctx context.Context, serviceName string, cfg config.ServiceConfig,
 	logger logging.Logger, register func(n string, p int)) (Rejecter, error) {
 	data, ok := cfg.ExtraConfig[Namespace]

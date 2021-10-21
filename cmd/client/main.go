@@ -17,7 +17,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/devopsfaith/bloomfilter/rpc/client"
+	"github.com/devopsfaith/bloomfilter/v2/rpc/client"
 )
 
 func main() {

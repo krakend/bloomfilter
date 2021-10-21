@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/devopsfaith/bloomfilter"
-	"github.com/devopsfaith/bloomfilter/bloomfilter"
-	"github.com/devopsfaith/bloomfilter/testutils"
+	"github.com/devopsfaith/bloomfilter/v2"
+	"github.com/devopsfaith/bloomfilter/v2/bloomfilter"
+	"github.com/devopsfaith/bloomfilter/v2/testutils"
 )
 
 func TestRotate_Union_ok(t *testing.T) {
