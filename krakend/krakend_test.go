@@ -90,8 +90,8 @@ func TestRegister_koNamespace(t *testing.T) {
 
 	if _, err := Register(ctx, "bloomfilter-test", serviceConf, logger, func(name string, port int) {
 		t.Error("this error should never been called")
-	}); err != errNoConfig {
-		t.Errorf("didn't get error %s", errNoConfig)
+	}); err != ErrNoConfig {
+		t.Errorf("didn't get error %s", ErrNoConfig)
 	}
 
 }
