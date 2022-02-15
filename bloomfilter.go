@@ -18,9 +18,9 @@ type Bloomfilter interface {
 // P - desired false positive probability, N - number of elements to be stored in the filter and
 // HashName - the name of the particular hashfunction
 type Config struct {
-	N        uint
-	P        float64
-	HashName string
+	N        uint    `json:"n"`
+	P        float64 `json:"p"`
+	HashName string  `json:"hash_name"`
 }
 
 // EmptyConfig configuration used for first empty `previous` bloomfilter in the sliding three bloomfilters

@@ -25,8 +25,8 @@ var (
 // Config defines the configuration to be added to the KrakenD gateway
 type Config struct {
 	bf_rpc.Config
-	TokenKeys []string
-	Headers   []string
+	TokenKeys []string `json:"token_keys"`
+	Headers   []string `json:"headers"`
 }
 
 // Registers a bloomfilter given a config

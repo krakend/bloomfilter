@@ -1,4 +1,4 @@
-package baseBloomfilter
+package bbloomfilter
 
 import (
 	"bytes"

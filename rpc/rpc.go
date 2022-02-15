@@ -11,7 +11,7 @@ import (
 // Config type containing a sliding bloomfilter set and a port
 type Config struct {
 	rotate.Config
-	Port int
+	Port int `json:"port"`
 }
 
 // BloomfilterRPC type
