@@ -3,8 +3,8 @@ module github.com/devopsfaith/bloomfilter/v2
 go 1.17
 
 require (
-	github.com/devopsfaith/krakend-gologging/v2 v2.0.0-20211021151950-cc8f98a75534
-	github.com/luraproject/lura/v2 v2.0.0-dev
+	github.com/devopsfaith/krakend-gologging/v2 v2.0.0
+	github.com/luraproject/lura/v2 v2.0.0
 	github.com/tmthrgd/go-bitset v0.0.0-20180828125936-62ad9ed7ff29
 )
 

@@ -4,6 +4,8 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/devopsfaith/flatmap v0.0.0-20200601181759-8521186182fc/go.mod h1:J9Y/58s7wx7HbHT3i4UKNwLGuBB9qCf0/JUdEFGDPmA=
 github.com/devopsfaith/krakend-gologging/v2 v2.0.0-20211021151950-cc8f98a75534 h1:ipc5YExAZEmiLZgHNdXv4skjOnflT3cI0dqw+cf3GpM=
 github.com/devopsfaith/krakend-gologging/v2 v2.0.0-20211021151950-cc8f98a75534/go.mod h1:v8Mlie1z2Pco262YdVXF6g+C0UqTAsgHrw4S+Sa+QBU=
+github.com/devopsfaith/krakend-gologging/v2 v2.0.0 h1:Exnsls6rXmUWpO7KyAxgBexu25zHv9u1EAeDC6U2hAI=
+github.com/devopsfaith/krakend-gologging/v2 v2.0.0/go.mod h1:hgavNPcgZJk+JPgvOTkzSOdm6oQDirxHD+keFuxeDKc=
 github.com/dimfeld/httptreemux/v5 v5.3.0/go.mod h1:QeEylH57C0v3VO0tkKraVz9oD3Uu93CKPnTLbsidvSw=
 github.com/gin-contrib/sse v0.1.0/go.mod h1:RHrZQHXnP2xjPF+u1gW/2HnVO7nvIa9PG3Gm+fLHvGI=
 github.com/gin-gonic/gin v1.7.4/go.mod h1:jD2toBW3GZUr5UMcdrwQA10I7RuaFOl/SGeDjXkfUtY=
@@ -33,6 +35,8 @@ github.com/leodido/go-urn v1.2.0/go.mod h1:+8+nEpDfqqsY+g338gtMEUOtuK+4dEMhiQEgx
 github.com/leodido/go-urn v1.2.1/go.mod h1:zt4jvISO2HfUBqxjfIshjdMTYS56ZS/qv49ictyFfxY=
 github.com/luraproject/lura/v2 v2.0.0-dev h1:5QLEEUtIZ83QiC+kU2iP0oJ7XvHn9HGc/m0mouQlmFE=
 github.com/luraproject/lura/v2 v2.0.0-dev/go.mod h1:OqrMGe6pOC526IlGWLfhLjjRPyc8vRATXZYih9EbEZs=
+github.com/luraproject/lura/v2 v2.0.0 h1:nfIr4a8XLMECaPQBpGSWxXhNAya7JQwGa3kzLRy5z14=
+github.com/luraproject/lura/v2 v2.0.0/go.mod h1:1FhL+5a9uH6o7zMNstXlcjznL5yt2lZ9Q8efanmvw9w=
 github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Kysco4FUpU=
 github.com/mattn/go-isatty v0.0.14/go.mod h1:7GGIvUiUoEMVVmxf/4nioHXj79iQHKdU27kJ6hsGG94=
 github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
