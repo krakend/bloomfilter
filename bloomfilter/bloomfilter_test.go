@@ -1,4 +1,4 @@
-package baseBloomfilter
+package bbloomfilter
 
 import (
 	"bytes"
@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/devopsfaith/bloomfilter"
-	"github.com/devopsfaith/bloomfilter/testutils"
+	"github.com/devopsfaith/bloomfilter/v2"
+	"github.com/devopsfaith/bloomfilter/v2/testutils"
 )
 
 func TestBloomfilter(t *testing.T) {

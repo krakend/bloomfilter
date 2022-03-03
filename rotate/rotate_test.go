@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/devopsfaith/bloomfilter"
-	"github.com/devopsfaith/bloomfilter/bloomfilter"
-	"github.com/devopsfaith/bloomfilter/testutils"
+	"github.com/devopsfaith/bloomfilter/v2"
+	bbloomfilter "github.com/devopsfaith/bloomfilter/v2/bloomfilter"
+	"github.com/devopsfaith/bloomfilter/v2/testutils"
 )
 
 func TestRotate_Union_ok(t *testing.T) {
@@ -125,9 +125,9 @@ func TestRotate_KeepRotating(t *testing.T) {
 	dt := 5 * time.Millisecond
 
 	rotate := &Bloomfilter{
-		Previous: baseBloomfilter.New(testutils.TestCfg),
-		Current:  baseBloomfilter.New(testutils.TestCfg),
-		Next:     baseBloomfilter.New(testutils.TestCfg),
+		Previous: bbloomfilter.New(testutils.TestCfg),
+		Current:  bbloomfilter.New(testutils.TestCfg),
+		Next:     bbloomfilter.New(testutils.TestCfg),
 		Config:   Config{testutils.TestCfg, 5},
 		cancel:   cancel,
 		mutex:    &sync.RWMutex{},

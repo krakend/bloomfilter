@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/rpc"
 
-	"github.com/devopsfaith/bloomfilter/rotate"
-	rpc_bf "github.com/devopsfaith/bloomfilter/rpc"
+	"github.com/devopsfaith/bloomfilter/v2/rotate"
+	rpc_bf "github.com/devopsfaith/bloomfilter/v2/rpc"
 )
 
 // Bloomfilter rpc client type

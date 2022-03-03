@@ -4,7 +4,7 @@ package testutils
 import (
 	"testing"
 
-	"github.com/devopsfaith/bloomfilter"
+	"github.com/devopsfaith/bloomfilter/v2"
 )
 
 var (

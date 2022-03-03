@@ -1,3 +1,5 @@
+//go:build integration
+
 package rpc
 
 import (
@@ -5,8 +7,8 @@ import (
 	"fmt"
 	"net/rpc"
 
-	"github.com/devopsfaith/bloomfilter"
-	"github.com/devopsfaith/bloomfilter/rotate"
+	"github.com/devopsfaith/bloomfilter/v2"
+	"github.com/devopsfaith/bloomfilter/v2/rotate"
 )
 
 func Example_integration() {

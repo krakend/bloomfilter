@@ -10,10 +10,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/devopsfaith/bloomfilter"
-	"github.com/devopsfaith/bloomfilter/rotate"
-	"github.com/devopsfaith/bloomfilter/rpc"
-	"github.com/devopsfaith/bloomfilter/rpc/server"
+	"github.com/devopsfaith/bloomfilter/v2"
+	"github.com/devopsfaith/bloomfilter/v2/rotate"
+	"github.com/devopsfaith/bloomfilter/v2/rpc"
+	"github.com/devopsfaith/bloomfilter/v2/rpc/server"
 )
 
 func main() {

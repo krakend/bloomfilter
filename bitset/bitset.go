@@ -4,7 +4,7 @@
 package bitset
 
 import (
-	"github.com/devopsfaith/bloomfilter"
+	"github.com/devopsfaith/bloomfilter/v2"
 	"github.com/tmthrgd/go-bitset"
 )
 

@@ -13,8 +13,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/devopsfaith/bloomfilter"
-	"github.com/devopsfaith/bloomfilter/bloomfilter"
+	"github.com/devopsfaith/bloomfilter/v2"
+	bbloomfilter "github.com/devopsfaith/bloomfilter/v2/bloomfilter"
 )
 
 // New creates a new sliding set of 3 bloomfilters
@@ -24,9 +24,9 @@ func New(ctx context.Context, cfg Config) *Bloomfilter {
 	prevCfg := bloomfilter.EmptyConfig
 	prevCfg.HashName = cfg.HashName
 	r := &Bloomfilter{
-		Previous: baseBloomfilter.New(prevCfg),
-		Current:  baseBloomfilter.New(cfg.Config),
-		Next:     baseBloomfilter.New(cfg.Config),
+		Previous: bbloomfilter.New(prevCfg),
+		Current:  bbloomfilter.New(cfg.Config),
+		Next:     bbloomfilter.New(cfg.Config),
 		Config:   cfg,
 		cancel:   cancel,
 		mutex:    &sync.RWMutex{},
@@ -40,12 +40,12 @@ func New(ctx context.Context, cfg Config) *Bloomfilter {
 // Config contains a bloomfilter config and the rotation frequency TTL in sec
 type Config struct {
 	bloomfilter.Config
-	TTL uint
+	TTL uint `json:"ttl"`
 }
 
 // Bloomfilter type defines a sliding set of 3 bloomfilters
 type Bloomfilter struct {
-	Previous, Current, Next *baseBloomfilter.Bloomfilter
+	Previous, Current, Next *bbloomfilter.Bloomfilter
 	Config                  Config
 	mutex                   *sync.RWMutex
 	ctx                     context.Context
@@ -123,7 +123,7 @@ func (bs *Bloomfilter) keepRotating(ctx context.Context, c <-chan time.Time) {
 
 		bs.Previous = bs.Current
 		bs.Current = bs.Next
-		bs.Next = baseBloomfilter.New(bloomfilter.Config{
+		bs.Next = bbloomfilter.New(bloomfilter.Config{
 			N:        bs.Config.N,
 			P:        bs.Config.P,
 			HashName: bs.Config.HashName,
@@ -136,7 +136,7 @@ func (bs *Bloomfilter) keepRotating(ctx context.Context, c <-chan time.Time) {
 // SerializibleBloomfilter used when (de)serializing a set of sliding bloomfilters
 // It has exportable fields
 type SerializibleBloomfilter struct {
-	Previous, Current, Next *baseBloomfilter.Bloomfilter
+	Previous, Current, Next *bbloomfilter.Bloomfilter
 	Config                  Config
 }
 

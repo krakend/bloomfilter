@@ -2,15 +2,13 @@ package krakend
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
-	"github.com/devopsfaith/bloomfilter"
-	"github.com/devopsfaith/bloomfilter/rotate"
-	"github.com/devopsfaith/bloomfilter/rpc"
-	consul "github.com/devopsfaith/krakend-consul"
-	gologging "github.com/devopsfaith/krakend-gologging"
-	"github.com/luraproject/lura/config"
+	"github.com/devopsfaith/bloomfilter/v2"
+	"github.com/devopsfaith/bloomfilter/v2/rotate"
+	"github.com/devopsfaith/bloomfilter/v2/rpc"
+	gologging "github.com/devopsfaith/krakend-gologging/v2"
+	"github.com/luraproject/lura/v2/config"
 )
 
 func TestRegister_ok(t *testing.T) {
@@ -27,18 +25,6 @@ func TestRegister_ok(t *testing.T) {
 			},
 			Port: 1234,
 		},
-	}
-	cfgConsul := consul.Config{
-		Address: "127.0.0.1:8500",
-		Tags: []string{
-			"1224", "2233",
-		},
-		Port: 1234,
-		Name: "bloomfilter-test",
-	}
-
-	consulExtraConfig := config.ExtraConfig{
-		"github_com/letgoapp/krakend-consul": cfgConsul,
 	}
 
 	serviceConf := config.ServiceConfig{
@@ -58,12 +44,16 @@ func TestRegister_ok(t *testing.T) {
 		return
 	}
 
+	registered := false
+
 	if _, err := Register(ctx, "bloomfilter-test", serviceConf, logger, func(name string, port int) {
-		if err := consul.Register(ctx, consulExtraConfig, port, name, logger); err != nil {
-			logger.Error(fmt.Sprintf("Couldn't register %s:%d in consul: %s", name, port, err.Error()))
-		}
+		registered = true
 	}); err != nil {
 		t.Errorf("got error when registering: %s", err.Error())
+	}
+
+	if !registered {
+		t.Error("register function not called")
 	}
 }
 
@@ -99,10 +89,9 @@ func TestRegister_koNamespace(t *testing.T) {
 	}
 
 	if _, err := Register(ctx, "bloomfilter-test", serviceConf, logger, func(name string, port int) {
-		if err := consul.Register(ctx, map[string]interface{}{}, port, name, logger); err != nil {
-			logger.Error(fmt.Sprintf("Couldn't register %s:%d in consul: %s", name, port, err.Error()))
-		}
-	}); err != errNoConfig {
-		t.Errorf("didn't get error %s", errNoConfig)
+		t.Error("this error should never been called")
+	}); err != ErrNoConfig {
+		t.Errorf("didn't get error %s", ErrNoConfig)
 	}
+
 }

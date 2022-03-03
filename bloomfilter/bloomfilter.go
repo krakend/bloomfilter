@@ -1,10 +1,10 @@
-// Package baseBloomfilter implements a bloomfilter based on an m-bit bit array, k hashfilters and configuration.
+// Package bbloomfilter implements a bloomfilter based on an m-bit bit array, k hashfilters and configuration.
 //
 // It creates a bloomfilter based on bitset and an injected hasher, along with the
 // following operations: add an element to the bloomfilter, check the existence of an element
 // in the bloomfilter, the union of two bloomfilters, along with the serialization and
 // deserialization of a bloomfilter: http://llimllib.github.io/bloomfilter-tutorial/
-package baseBloomfilter
+package bbloomfilter
 
 import (
 	"bytes"
@@ -14,7 +14,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/devopsfaith/bloomfilter"
+	"github.com/devopsfaith/bloomfilter/v2"
 	"github.com/tmthrgd/go-bitset"
 )
 
