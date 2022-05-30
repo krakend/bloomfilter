@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/devopsfaith/bloomfilter/v2"
-	"github.com/devopsfaith/bloomfilter/v2/testutils"
+	"github.com/krakendio/bloomfilter/v2"
+	"github.com/krakendio/bloomfilter/v2/testutils"
 )
 
 func TestBloomfilter(t *testing.T) {

@@ -1,4 +1,4 @@
-module github.com/devopsfaith/bloomfilter/v2
+module github.com/krakendio/bloomfilter/v2
 
 go 1.17
 

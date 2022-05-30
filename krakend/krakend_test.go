@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/devopsfaith/bloomfilter/v2"
-	"github.com/devopsfaith/bloomfilter/v2/rotate"
-	"github.com/devopsfaith/bloomfilter/v2/rpc"
+	"github.com/krakendio/bloomfilter/v2"
+	"github.com/krakendio/bloomfilter/v2/rotate"
+	"github.com/krakendio/bloomfilter/v2/rpc"
 	gologging "github.com/krakendio/krakend-gologging/v2"
 	"github.com/luraproject/lura/v2/config"
 )
@@ -29,7 +29,7 @@ func TestRegister_ok(t *testing.T) {
 
 	serviceConf := config.ServiceConfig{
 		ExtraConfig: map[string]interface{}{
-			"github_com/devopsfaith/bloomfilter": cfgBloomFilter,
+			"github_com/krakendio/bloomfilter": cfgBloomFilter,
 		},
 	}
 
