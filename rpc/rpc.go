@@ -104,7 +104,7 @@ type UnionOutput struct {
 }
 
 // Union rpc layer implementation of two sliding bloomfilter sets
-func (b *BloomfilterRPC) Union(in UnionInput, out *UnionOutput) error {
+func (BloomfilterRPC) Union(in UnionInput, out *UnionOutput) error {
 	fmt.Println("union:", in.BF)
 	defer func() { fmt.Println("union resulting capacity:", out.Capacity) }()
 
@@ -120,14 +120,14 @@ func (b *BloomfilterRPC) Union(in UnionInput, out *UnionOutput) error {
 }
 
 // Close sliding bloomfilter set
-func (b *Bloomfilter) Close() {
+func (Bloomfilter) Close() {
 	if bf != nil {
 		bf.Close()
 	}
 }
 
 // Bloomfilter getter
-func (b *Bloomfilter) Bloomfilter() *rotate.Bloomfilter {
+func (Bloomfilter) Bloomfilter() *rotate.Bloomfilter {
 	return bf
 }
 
