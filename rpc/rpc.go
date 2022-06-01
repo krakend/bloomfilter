@@ -44,7 +44,7 @@ type AddOutput struct {
 }
 
 // Add rpc layer implementation of an array of elements to a sliding bloomfilter set
-func (b *BloomfilterRPC) Add(in AddInput, out *AddOutput) error {
+func (*BloomfilterRPC) Add(in AddInput, out *AddOutput) error {
 	fmt.Println("add:", in.Elems)
 	defer func() { fmt.Println("added elements:", out.Count) }()
 
@@ -74,7 +74,7 @@ type CheckOutput struct {
 }
 
 // Check rpc layer implementation of an array of elements in a sliding bloomfilter set
-func (b *BloomfilterRPC) Check(in CheckInput, out *CheckOutput) error {
+func (*BloomfilterRPC) Check(in CheckInput, out *CheckOutput) error {
 	fmt.Println("check:", in.Elems)
 	defer func() { fmt.Println("checked elements:", out.Checks) }()
 

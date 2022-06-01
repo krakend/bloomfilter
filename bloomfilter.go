@@ -43,10 +43,10 @@ func K(m, n uint) uint {
 type EmptySet int
 
 // Check implementation for EmptySet
-func (e EmptySet) Check(_ []byte) bool { return false }
+func (EmptySet) Check(_ []byte) bool { return false }
 
 // Add implementation for EmptySet
-func (e EmptySet) Add(_ []byte) {}
+func (EmptySet) Add(_ []byte) {}
 
 // Union implementation for EmptySet
-func (e EmptySet) Union(interface{}) (float64, error) { return -1, nil }
+func (EmptySet) Union(interface{}) (float64, error) { return -1, nil }
