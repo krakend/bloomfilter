@@ -29,7 +29,7 @@ func TestRegister_ok(t *testing.T) {
 
 	serviceConf := config.ServiceConfig{
 		ExtraConfig: map[string]interface{}{
-			"github_com/krakendio/bloomfilter": cfgBloomFilter,
+			"github_com/devopsfaith/bloomfilter": cfgBloomFilter,
 		},
 	}
 
