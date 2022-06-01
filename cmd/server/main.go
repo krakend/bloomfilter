@@ -10,10 +10,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/devopsfaith/bloomfilter/v2"
-	"github.com/devopsfaith/bloomfilter/v2/rotate"
-	"github.com/devopsfaith/bloomfilter/v2/rpc"
-	"github.com/devopsfaith/bloomfilter/v2/rpc/server"
+	"github.com/krakendio/bloomfilter/v2"
+	"github.com/krakendio/bloomfilter/v2/rotate"
+	"github.com/krakendio/bloomfilter/v2/rpc"
+	"github.com/krakendio/bloomfilter/v2/rpc/server"
 )
 
 func main() {
@@ -27,15 +27,15 @@ func main() {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
 	cfg := rpc.Config{
-		rotate.Config{
-			bloomfilter.Config{
+		Config: rotate.Config{
+			Config: bloomfilter.Config{
 				N:        10000000,
 				P:        0.0000001,
 				HashName: "optimal",
 			},
-			1000,
+			TTL: 1000,
 		},
-		*port,
+		Port: *port,
 	}
 	bf := server.New(ctx, cfg)
 	for {

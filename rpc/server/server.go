@@ -7,7 +7,7 @@ import (
 	"net"
 	"net/rpc"
 
-	rpc_bf "github.com/devopsfaith/bloomfilter/v2/rpc"
+	rpc_bf "github.com/krakendio/bloomfilter/v2/rpc"
 )
 
 // New creates an rpc bloomfilter and launches a serving goroutine

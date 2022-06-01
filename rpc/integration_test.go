@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"net/rpc"
 
-	"github.com/devopsfaith/bloomfilter/v2"
-	"github.com/devopsfaith/bloomfilter/v2/rotate"
+	"github.com/krakendio/bloomfilter/v2"
+	"github.com/krakendio/bloomfilter/v2/rotate"
 )
 
 func Example_integration() {
