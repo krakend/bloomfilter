@@ -27,7 +27,7 @@ func New(address string) (*Bloomfilter, error) {
 // Add element through bloomfilter rpc client
 func (b *Bloomfilter) Add(elem []byte) error {
 	var addOutput rpc_bf.AddOutput
-	if err := b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{[][]byte{elem}}, &addOutput); err != nil {
+	if err := b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{Elems: [][]byte{elem}}, &addOutput); err != nil {
 		fmt.Println("error on adding bloomfilter:", err.Error())
 		return err
 	}
@@ -37,7 +37,7 @@ func (b *Bloomfilter) Add(elem []byte) error {
 // Add element through bloomfilter rpc client
 func (b *Bloomfilter) AddBatch(batch [][]byte) error {
 	var addOutput rpc_bf.AddOutput
-	if err := b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{batch}, &addOutput); err != nil {
+	if err := b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{Elems: batch}, &addOutput); err != nil {
 		fmt.Println("error on adding bloomfilter:", err.Error())
 		return err
 	}
@@ -47,7 +47,7 @@ func (b *Bloomfilter) AddBatch(batch [][]byte) error {
 // Check present element through bloomfilter rpc client
 func (b *Bloomfilter) Check(elem []byte) (bool, error) {
 	var checkOutput rpc_bf.CheckOutput
-	if err := b.client.Call("BloomfilterRPC.Check", rpc_bf.CheckInput{[][]byte{elem}}, &checkOutput); err != nil {
+	if err := b.client.Call("BloomfilterRPC.Check", rpc_bf.CheckInput{Elems: [][]byte{elem}}, &checkOutput); err != nil {
 		fmt.Println("error on check bloomfilter:", err.Error())
 		return false, err
 	}
@@ -66,7 +66,7 @@ func (b *Bloomfilter) Union(that interface{}) (float64, error) {
 		return -1.0, errors.New("invalide argument to Union, expected rotate.Bloomfilter")
 	}
 	var unionOutput rpc_bf.UnionOutput
-	if err := b.client.Call("BloomfilterRPC.Union", rpc_bf.UnionInput{v}, &unionOutput); err != nil {
+	if err := b.client.Call("BloomfilterRPC.Union", rpc_bf.UnionInput{BF: v}, &unionOutput); err != nil {
 		fmt.Println("error on union bloomfilter:", err.Error())
 		return -1.0, err
 	}

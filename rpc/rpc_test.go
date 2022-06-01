@@ -9,7 +9,13 @@ import (
 )
 
 func TestBFAdd_ok(t *testing.T) {
-	b := New(context.Background(), Config{rotate.Config{testutils.TestCfg, 5}, 1234})
+	b := New(context.Background(), Config{
+		Config: rotate.Config{
+			Config: testutils.TestCfg,
+			TTL:    5,
+		},
+		Port: 1234,
+	})
 
 	var (
 		addOutput AddOutput
@@ -26,7 +32,13 @@ func TestBFAdd_ok(t *testing.T) {
 }
 
 func TestBFCheck_ok(t *testing.T) {
-	b := New(context.Background(), Config{rotate.Config{testutils.TestCfg, 5}, 1234})
+	b := New(context.Background(), Config{
+		Config: rotate.Config{
+			Config: testutils.TestCfg,
+			TTL:    5,
+		},
+		Port: 1234,
+	})
 
 	var (
 		addOutput   AddOutput
@@ -54,7 +66,13 @@ func TestBFCheck_ok(t *testing.T) {
 }
 
 func TestBFUnion_ok(t *testing.T) {
-	b := New(context.Background(), Config{rotate.Config{testutils.TestCfg, 5}, 1234})
+	b := New(context.Background(), Config{
+		Config: rotate.Config{
+			Config: testutils.TestCfg,
+			TTL:    5,
+		},
+		Port: 1234,
+	})
 
 	var (
 		addOutput   AddOutput
@@ -71,7 +89,7 @@ func TestBFUnion_ok(t *testing.T) {
 		return
 	}
 
-	var bf2 = rotate.New(context.Background(), rotate.Config{testutils.TestCfg, 5})
+	var bf2 = rotate.New(context.Background(), rotate.Config{Config: testutils.TestCfg, TTL: 5})
 	bf2.Add([]byte("house"))
 
 	err = b.Union(UnionInput{bf2}, &unionOutput)
@@ -90,7 +108,7 @@ func TestBFUnion_ok(t *testing.T) {
 		return
 	}
 
-	var bf3 = rotate.New(context.Background(), rotate.Config{testutils.TestCfg, 5})
+	var bf3 = rotate.New(context.Background(), rotate.Config{Config: testutils.TestCfg, TTL: 5})
 	bf3.Add([]byte("mouse"))
 
 	b.Union(UnionInput{bf3}, &unionOutput)
@@ -143,7 +161,7 @@ func TestBFUnion_ko(t *testing.T) {
 		unionOutput UnionOutput
 	)
 
-	var bf2 = rotate.New(context.Background(), rotate.Config{testutils.TestCfg, 5})
+	var bf2 = rotate.New(context.Background(), rotate.Config{Config: testutils.TestCfg, TTL: 5})
 	bf2.Add([]byte("house"))
 
 	err := b.Union(UnionInput{bf2}, &unionOutput)

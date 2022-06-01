@@ -27,15 +27,15 @@ func main() {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
 	cfg := rpc.Config{
-		rotate.Config{
-			bloomfilter.Config{
+		Config: rotate.Config{
+			Config: bloomfilter.Config{
 				N:        10000000,
 				P:        0.0000001,
 				HashName: "optimal",
 			},
-			1000,
+			TTL: 1000,
 		},
-		*port,
+		Port: *port,
 	}
 	bf := server.New(ctx, cfg)
 	for {
