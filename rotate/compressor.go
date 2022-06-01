@@ -22,11 +22,11 @@ func SetCompressor(c Compressor) {
 type Gzip int
 
 // NewWriter implementation fo Gzip
-func (g *Gzip) NewWriter(w io.Writer) io.WriteCloser {
+func (*Gzip) NewWriter(w io.Writer) io.WriteCloser {
 	return gzip.NewWriter(w)
 }
 
 // NewReader implementation fo Gzip
-func (g *Gzip) NewReader(r io.Reader) (io.Reader, error) {
+func (*Gzip) NewReader(r io.Reader) (io.Reader, error) {
 	return gzip.NewReader(r)
 }
