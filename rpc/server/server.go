@@ -20,18 +20,16 @@ func New(ctx context.Context, cfg rpc_bf.Config) *rpc_bf.Bloomfilter {
 }
 
 // Serve creates an rpc server, registers a bloomfilter, accepts a tcp listener and closes when catching context done
-func Serve(ctx context.Context, port int, bf *rpc_bf.Bloomfilter) {
+func Serve(ctx context.Context, port int, bf *rpc_bf.Bloomfilter) error {
 	s := rpc.NewServer()
 
 	if err := s.Register(&bf.BloomfilterRPC); err != nil {
-		fmt.Println("server register error:", err.Error())
-		return
+		return err
 	}
 
 	l, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
-		fmt.Println("unable to setup RPC listener:", err.Error())
-		return
+		return err
 	}
 
 	go func() {
@@ -46,4 +44,5 @@ func Serve(ctx context.Context, port int, bf *rpc_bf.Bloomfilter) {
 	}()
 
 	s.Accept(l)
+	return nil
 }

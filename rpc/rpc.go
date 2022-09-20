@@ -44,10 +44,7 @@ type AddOutput struct {
 }
 
 // Add rpc layer implementation of an array of elements to a sliding bloomfilter set
-func (*BloomfilterRPC) Add(in AddInput, out *AddOutput) error {
-	fmt.Println("add:", in.Elems)
-	defer func() { fmt.Println("added elements:", out.Count) }()
-
+func (BloomfilterRPC) Add(in AddInput, out *AddOutput) error {
 	if bf == nil {
 		out.Count = 0
 		return ErrNoBloomfilterInitialized
@@ -74,10 +71,7 @@ type CheckOutput struct {
 }
 
 // Check rpc layer implementation of an array of elements in a sliding bloomfilter set
-func (*BloomfilterRPC) Check(in CheckInput, out *CheckOutput) error {
-	fmt.Println("check:", in.Elems)
-	defer func() { fmt.Println("checked elements:", out.Checks) }()
-
+func (BloomfilterRPC) Check(in CheckInput, out *CheckOutput) error {
 	checkRes := make([]bool, len(in.Elems))
 
 	if bf == nil {
@@ -105,9 +99,6 @@ type UnionOutput struct {
 
 // Union rpc layer implementation of two sliding bloomfilter sets
 func (BloomfilterRPC) Union(in UnionInput, out *UnionOutput) error {
-	fmt.Println("union:", in.BF)
-	defer func() { fmt.Println("union resulting capacity:", out.Capacity) }()
-
 	if bf == nil {
 		out.Capacity = 0
 		return ErrNoBloomfilterInitialized

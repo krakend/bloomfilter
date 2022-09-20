@@ -30,8 +30,13 @@ type Config struct {
 }
 
 // Registers a bloomfilter given a config
-func Register(ctx context.Context, serviceName string, cfg config.ServiceConfig,
-	logger logging.Logger, register func(n string, p int)) (Rejecter, error) {
+func Register(
+	ctx context.Context,
+	serviceName string,
+	cfg config.ServiceConfig,
+	logger logging.Logger,
+	register func(n string, p int),
+) (Rejecter, error) {
 	data, ok := cfg.ExtraConfig[Namespace]
 	logPrefix := "[SERVICE: Bloomfilter]"
 	if !ok {
