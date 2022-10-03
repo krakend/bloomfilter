@@ -3,7 +3,6 @@ package client
 
 import (
 	"errors"
-	"fmt"
 	"net/rpc"
 
 	"github.com/krakendio/bloomfilter/v2/rotate"
@@ -27,28 +26,19 @@ func New(address string) (*Bloomfilter, error) {
 // Add element through bloomfilter rpc client
 func (b *Bloomfilter) Add(elem []byte) error {
 	var addOutput rpc_bf.AddOutput
-	if err := b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{Elems: [][]byte{elem}}, &addOutput); err != nil {
-		fmt.Println("error on adding bloomfilter:", err.Error())
-		return err
-	}
-	return nil
+	return b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{Elems: [][]byte{elem}}, &addOutput)
 }
 
-// Add element through bloomfilter rpc client
+// AddBatch adds a set of elements through bloomfilter rpc client
 func (b *Bloomfilter) AddBatch(batch [][]byte) error {
 	var addOutput rpc_bf.AddOutput
-	if err := b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{Elems: batch}, &addOutput); err != nil {
-		fmt.Println("error on adding bloomfilter:", err.Error())
-		return err
-	}
-	return nil
+	return b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{Elems: batch}, &addOutput)
 }
 
 // Check present element through bloomfilter rpc client
 func (b *Bloomfilter) Check(elem []byte) (bool, error) {
 	var checkOutput rpc_bf.CheckOutput
 	if err := b.client.Call("BloomfilterRPC.Check", rpc_bf.CheckInput{Elems: [][]byte{elem}}, &checkOutput); err != nil {
-		fmt.Println("error on check bloomfilter:", err.Error())
 		return false, err
 	}
 	for _, v := range checkOutput.Checks {
@@ -67,7 +57,6 @@ func (b *Bloomfilter) Union(that interface{}) (float64, error) {
 	}
 	var unionOutput rpc_bf.UnionOutput
 	if err := b.client.Call("BloomfilterRPC.Union", rpc_bf.UnionInput{BF: v}, &unionOutput); err != nil {
-		fmt.Println("error on union bloomfilter:", err.Error())
 		return -1.0, err
 	}
 
