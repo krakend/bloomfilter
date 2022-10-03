@@ -26,19 +26,13 @@ func New(address string) (*Bloomfilter, error) {
 // Add element through bloomfilter rpc client
 func (b *Bloomfilter) Add(elem []byte) error {
 	var addOutput rpc_bf.AddOutput
-	if err := b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{Elems: [][]byte{elem}}, &addOutput); err != nil {
-		return err
-	}
-	return nil
+	return b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{Elems: [][]byte{elem}}, &addOutput)
 }
 
-// Add element through bloomfilter rpc client
+// AddBatch adds a set of elements through bloomfilter rpc client
 func (b *Bloomfilter) AddBatch(batch [][]byte) error {
 	var addOutput rpc_bf.AddOutput
-	if err := b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{Elems: batch}, &addOutput); err != nil {
-		return err
-	}
-	return nil
+	return b.client.Call("BloomfilterRPC.Add", rpc_bf.AddInput{Elems: batch}, &addOutput)
 }
 
 // Check present element through bloomfilter rpc client

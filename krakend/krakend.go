@@ -29,7 +29,7 @@ type Config struct {
 	Headers   []string `json:"headers"`
 }
 
-// Registers a bloomfilter given a config
+// Register creates rejecter wrapping a bloomfilter given a config
 func Register(
 	ctx context.Context,
 	serviceName string,
