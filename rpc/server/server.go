@@ -33,14 +33,9 @@ func Serve(ctx context.Context, port int, bf *rpc_bf.Bloomfilter) error {
 	}
 
 	go func() {
-		for {
-			select {
-			case <-ctx.Done():
-				l.Close()
-				bf.Close()
-				return
-			}
-		}
+		<-ctx.Done()
+		l.Close()
+		bf.Close()
 	}()
 
 	s.Accept(l)
