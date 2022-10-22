@@ -8,11 +8,8 @@ package bbloomfilter
 
 import (
 	"bytes"
-	"crypto/rand"
 	"encoding/gob"
-	"errors"
 	"fmt"
-	"reflect"
 
 	"github.com/krakendio/bloomfilter/v2"
 	"github.com/tmthrgd/go-bitset"
@@ -76,15 +73,8 @@ func (b *Bloomfilter) Union(that interface{}) (float64, error) {
 		return b.Capacity(), fmt.Errorf("k1(%d) != k2(%d)", b.k, other.k)
 	}
 
-	hf0 := b.hashFactoryNameK(b.cfg.HashName)
-	hf1 := other.hashFactoryNameK(other.cfg.HashName)
-
-	subject := make([]byte, 1000)
-	rand.Read(subject)
-	for i, f := range hf0 {
-		if !reflect.DeepEqual(f(subject), hf1[i](subject)) {
-			return b.Capacity(), errors.New("error: different hashers")
-		}
+	if b.cfg.HashName != other.cfg.HashName {
+		return b.Capacity(), fmt.Errorf("different hashers: %s is not %s", other.cfg.HashName, b.cfg.HashName)
 	}
 
 	b.bs.Union(b.bs, other.bs)
