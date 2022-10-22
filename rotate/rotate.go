@@ -24,7 +24,8 @@ func New(ctx context.Context, cfg Config) *Bloomfilter {
 	prevCfg := bloomfilter.EmptyConfig
 	prevCfg.HashName = cfg.HashName
 	r := &Bloomfilter{
-		Previous: bbloomfilter.New(prevCfg),
+		// Previous: bbloomfilter.New(prevCfg),
+		Previous: bbloomfilter.New(cfg.Config),
 		Current:  bbloomfilter.New(cfg.Config),
 		Next:     bbloomfilter.New(cfg.Config),
 		Config:   cfg,
@@ -96,10 +97,6 @@ func (bs *Bloomfilter) Union(that interface{}) (float64, error) {
 		return bs.capacity(), fmt.Errorf("error: diferrent p values %.2f vs. %.2f", other.Config.P, bs.Config.P)
 	}
 
-	if _, err := bs.Previous.Union(other.Previous); err != nil {
-		return bs.capacity(), err
-	}
-
 	if _, err := bs.Current.Union(other.Current); err != nil {
 		return bs.capacity(), err
 	}
@@ -108,7 +105,8 @@ func (bs *Bloomfilter) Union(that interface{}) (float64, error) {
 		return bs.capacity(), err
 	}
 
-	return bs.capacity(), nil
+	_, err := bs.Previous.Union(other.Previous)
+	return bs.capacity(), err
 }
 
 func (bs *Bloomfilter) keepRotating(ctx context.Context, c <-chan time.Time) {
