@@ -46,7 +46,7 @@ func TestRotate_Union_koIncompatibleN(t *testing.T) {
 	cfg := testutils.TestCfg
 	cfg.N = 1
 	set2 := New(ctx, Config{cfg, 5})
-	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: diferrent n values") {
+	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "different n values") {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }
@@ -59,7 +59,7 @@ func TestRotate_Union_koIncompatibleP(t *testing.T) {
 	cfg := testutils.TestCfg
 	cfg.P = 0.5
 	set2 := New(ctx, Config{cfg, 5})
-	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: diferrent p values") {
+	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "different p values") {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }
@@ -70,7 +70,7 @@ func TestRotate_Union_koIncompatibleCurrentBFs(t *testing.T) {
 
 	set1 := New(ctx, Config{testutils.TestCfg, 5})
 	set2 := New(ctx, Config{testutils.TestCfg2, 5})
-	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: diferrent p values") {
+	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "different p values") {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }
@@ -81,7 +81,7 @@ func TestRotate_Union_koDifferentHashFuncsBFs(t *testing.T) {
 
 	set1 := New(ctx, Config{testutils.TestCfg, 5})
 	set2 := New(ctx, Config{testutils.TestCfg3, 5})
-	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "error: different hashers") {
+	if _, err := set1.Union(set2); err == nil || !strings.Contains(err.Error(), "different hashers") {
 		t.Errorf("Unexpected error, %v", err)
 	}
 }

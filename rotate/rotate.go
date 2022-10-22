@@ -90,11 +90,11 @@ func (bs *Bloomfilter) Union(that interface{}) (float64, error) {
 		return bs.capacity(), bloomfilter.ErrImpossibleToTreat
 	}
 	if other.Config.N != bs.Config.N {
-		return bs.capacity(), fmt.Errorf("error: diferrent n values %d vs. %d", other.Config.N, bs.Config.N)
+		return bs.capacity(), fmt.Errorf("different n values %d vs. %d", other.Config.N, bs.Config.N)
 	}
 
 	if other.Config.P != bs.Config.P {
-		return bs.capacity(), fmt.Errorf("error: diferrent p values %.2f vs. %.2f", other.Config.P, bs.Config.P)
+		return bs.capacity(), fmt.Errorf("different p values %.2f vs. %.2f", other.Config.P, bs.Config.P)
 	}
 
 	if _, err := bs.Current.Union(other.Current); err != nil {
