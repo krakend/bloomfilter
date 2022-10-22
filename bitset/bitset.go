@@ -16,7 +16,7 @@ type BitSet struct {
 
 // NewBitSet constructor for BitSet with an array of m bits
 func NewBitSet(m uint) *BitSet {
-	return &BitSet{bitset.New(m), bloomfilter.MD5}
+	return &BitSet{bs: bitset.New(m), hasher: bloomfilter.MD5}
 }
 
 // Add element to bitset
