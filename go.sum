@@ -1,7 +1,7 @@
 github.com/krakendio/krakend-gologging/v2 v2.0.1 h1:QuBgXfo9AMbMW2KrACPKGMg+gcbkGQqbiYnGDSPapS8=
 github.com/krakendio/krakend-gologging/v2 v2.0.1/go.mod h1:ar6rViGYhsxtiCfxGeh7b7Djbh5wMIBXsyBKudADLJs=
-github.com/luraproject/lura/v2 v2.1.0 h1:y5H8HXGhna0EvzrNN1nPo6v6hmftd/aVcHqrQs3f5Z4=
-github.com/luraproject/lura/v2 v2.1.0/go.mod h1:lkKDcV0O3jEK7fX/gGI7/fbkrDUOMKRqe442Xa3KRPQ=
+github.com/luraproject/lura/v2 v2.7.0 h1:9s4Pt56zBfZMLRW+igfa3tWxJJXpOcEnmVpWUkDyr3s=
+github.com/luraproject/lura/v2 v2.7.0/go.mod h1:D0+LPLJAuT9DcfjB4xvVMCnKmAMQikdbcXmYLdmEA6A=
 github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 h1:lDH9UUVJtmYCjyT0CI4q8xvlXPxeZ0gYCVvWbmPlp88=
 github.com/op/go-logging v0.0.0-20160315200505-970db520ece7/go.mod h1:HzydrMdWErDVzsI23lYNej1Htcns9BCg93Dk0bBINWk=
 github.com/tmthrgd/atomics v0.0.0-20180217065130-6910de195248 h1:JUDytrg3F4kx+oWd8e1Up4EHXjqgpjDoaNkCNGYZPW0=
