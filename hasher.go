@@ -1,8 +1,8 @@
 package bloomfilter
 
 import (
-	"crypto/md5"
-	"crypto/sha1"
+	"crypto/md5"  // skipcq: GSC-G501
+	"crypto/sha1" // skipcq: GSC-G505
 	"encoding/binary"
 	"fmt"
 	"hash"
@@ -34,8 +34,8 @@ var (
 
 	ErrImpossibleToTreat = fmt.Errorf("unable to union")
 
-	MD5    = HashWrapper(md5.New())
-	SHA1   = HashWrapper(sha1.New())
+	MD5    = HashWrapper(md5.New())  // skipcq: GO-S1023, GSC-G401
+	SHA1   = HashWrapper(sha1.New()) // skipcq: GO-S1025, GSC-G401
 	CRC64  = HashWrapper(crc64.New(crc64.MakeTable(crc64.ECMA)))
 	FNV64  = HashWrapper(fnv.New64())
 	FNV128 = HashWrapper(fnv.New128())
