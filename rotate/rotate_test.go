@@ -193,7 +193,7 @@ func BenchmarkRotate_UnmarshalBinary_GZIP(b *testing.B) {
 
 func benchmarkRotate_UnmarshalBinary(b *testing.B, bf bloomfilter.Bloomfilter) {
 	buf := make([]byte, 150*1000*1024)
-	rand.Read(buf)
+	rand.Read(buf) // skipcq: GSC-G404
 
 	for _, size := range []int{10, 1024, 1000 * 1024, 10 * 1000 * 1024, 100 * 1000 * 1024} {
 		b.Run(fmt.Sprintf("size_%d", size), func(b *testing.B) {
