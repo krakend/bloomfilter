@@ -11,7 +11,7 @@ import (
 	"encoding/gob"
 	"fmt"
 
-	"github.com/krakendio/bloomfilter/v2"
+	"github.com/krakend/bloomfilter/v2"
 	"github.com/tmthrgd/go-bitset"
 )
 

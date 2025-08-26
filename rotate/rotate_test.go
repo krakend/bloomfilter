@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/krakendio/bloomfilter/v2"
-	bbloomfilter "github.com/krakendio/bloomfilter/v2/bloomfilter"
-	"github.com/krakendio/bloomfilter/v2/testutils"
+	"github.com/krakend/bloomfilter/v2"
+	bbloomfilter "github.com/krakend/bloomfilter/v2/bloomfilter"
+	"github.com/krakend/bloomfilter/v2/testutils"
 )
 
 func TestRotate_Union_ok(t *testing.T) {

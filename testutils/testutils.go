@@ -4,7 +4,7 @@ package testutils
 import (
 	"testing"
 
-	"github.com/krakendio/bloomfilter/v2"
+	"github.com/krakend/bloomfilter/v2"
 )
 
 var (
