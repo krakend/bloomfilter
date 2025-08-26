@@ -7,9 +7,9 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/krakendio/bloomfilter/v2"
-	bf_rpc "github.com/krakendio/bloomfilter/v2/rpc"
-	"github.com/krakendio/bloomfilter/v2/rpc/server"
+	"github.com/krakend/bloomfilter/v2"
+	bf_rpc "github.com/krakend/bloomfilter/v2/rpc"
+	"github.com/krakend/bloomfilter/v2/rpc/server"
 	"github.com/luraproject/lura/v2/config"
 	"github.com/luraproject/lura/v2/logging"
 )

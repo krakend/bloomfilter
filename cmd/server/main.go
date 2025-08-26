@@ -10,10 +10,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/krakendio/bloomfilter/v2"
-	"github.com/krakendio/bloomfilter/v2/rotate"
-	"github.com/krakendio/bloomfilter/v2/rpc"
-	"github.com/krakendio/bloomfilter/v2/rpc/server"
+	"github.com/krakend/bloomfilter/v2"
+	"github.com/krakend/bloomfilter/v2/rotate"
+	"github.com/krakend/bloomfilter/v2/rpc"
+	"github.com/krakend/bloomfilter/v2/rpc/server"
 )
 
 func main() {

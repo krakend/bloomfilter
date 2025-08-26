@@ -5,8 +5,8 @@ import (
 	"errors"
 	"net/rpc"
 
-	"github.com/krakendio/bloomfilter/v2/rotate"
-	rpc_bf "github.com/krakendio/bloomfilter/v2/rpc"
+	"github.com/krakend/bloomfilter/v2/rotate"
+	rpc_bf "github.com/krakend/bloomfilter/v2/rpc"
 )
 
 // Bloomfilter rpc client type

@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/krakendio/bloomfilter/v2/rotate"
-	"github.com/krakendio/bloomfilter/v2/testutils"
+	"github.com/krakend/bloomfilter/v2/rotate"
+	"github.com/krakend/bloomfilter/v2/testutils"
 )
 
 func TestBFAdd_ok(t *testing.T) {
