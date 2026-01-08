@@ -62,8 +62,8 @@ func (bs *Bloomfilter) Close() {
 
 // Add element to sliding set of bloomfilters
 func (bs *Bloomfilter) Add(elem []byte) {
-	bs.mutex.RLock()
-	defer bs.mutex.RUnlock()
+	bs.mutex.Lock()
+	defer bs.mutex.Unlock()
 
 	bs.Next.Add(elem)
 	bs.Current.Add(elem)
