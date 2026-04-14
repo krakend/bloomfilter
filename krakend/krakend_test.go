@@ -46,7 +46,7 @@ func TestRegister_ok(t *testing.T) {
 
 	registered := false
 
-	if _, err := Register(ctx, "bloomfilter-test", serviceConf, logger, func(name string, port int) {
+	if _, err := Register(ctx, "bloomfilter-test", serviceConf, logger, func(_ string, _ int) {
 		registered = true
 	}); err != nil {
 		t.Errorf("got error when registering: %s", err.Error())
@@ -88,7 +88,7 @@ func TestRegister_koNamespace(t *testing.T) {
 		return
 	}
 
-	if _, err := Register(ctx, "bloomfilter-test", serviceConf, logger, func(name string, port int) {
+	if _, err := Register(ctx, "bloomfilter-test", serviceConf, logger, func(_ string, _ int) {
 		t.Error("this error should never been called")
 	}); err != ErrNoConfig {
 		t.Errorf("didn't get error %s", ErrNoConfig)
