@@ -7,15 +7,15 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/krakend/bloomfilter/v2"
-	bf_rpc "github.com/krakend/bloomfilter/v2/rpc"
-	"github.com/krakend/bloomfilter/v2/rpc/server"
-	"github.com/luraproject/lura/v2/config"
-	"github.com/luraproject/lura/v2/logging"
+	"github.com/krakend/bloomfilter/v3"
+	bf_rpc "github.com/krakend/bloomfilter/v3/rpc"
+	"github.com/krakend/bloomfilter/v3/rpc/server"
+	"github.com/luraproject/lura/v3/config"
+	"github.com/luraproject/lura/v3/logging"
 )
 
 // Namespace for bloomfilter
-const Namespace = "github_com/devopsfaith/bloomfilter"
+const Namespace = "auth/revoker"
 
 var (
 	ErrNoConfig    = errors.New("no config for the bloomfilter")

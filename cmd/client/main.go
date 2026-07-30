@@ -17,7 +17,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/krakend/bloomfilter/v2/rpc/client"
+	"github.com/krakend/bloomfilter/v3/rpc/client"
 )
 
 func main() {

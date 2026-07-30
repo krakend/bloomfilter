@@ -11,7 +11,7 @@ import (
 	"encoding/gob"
 	"fmt"
 
-	"github.com/krakend/bloomfilter/v2"
+	"github.com/krakend/bloomfilter/v3"
 	"github.com/tmthrgd/go-bitset"
 )
 
@@ -101,14 +101,14 @@ func (b *Bloomfilter) MarshalBinary() ([]byte, error) {
 		HashName: b.cfg.HashName,
 		Cfg:      b.cfg,
 	})
-	//zip buf.Bytes
+	// zip buf.Bytes
 
 	return buf.Bytes(), err
 }
 
 // UnmarshalBinary deserializes a bloomfilter
 func (b *Bloomfilter) UnmarshalBinary(data []byte) error {
-	//unzip data
+	// unzip data
 	buf := bytes.NewBuffer(data)
 	target := SerializibleBloomfilter{}
 

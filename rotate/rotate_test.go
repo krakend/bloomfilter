@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/krakend/bloomfilter/v2"
-	bbloomfilter "github.com/krakend/bloomfilter/v2/bloomfilter"
-	"github.com/krakend/bloomfilter/v2/testutils"
+	"github.com/krakend/bloomfilter/v3"
+	bbloomfilter "github.com/krakend/bloomfilter/v3/bloomfilter"
+	"github.com/krakend/bloomfilter/v3/testutils"
 )
 
 func TestRotate_Union_ok(t *testing.T) {
@@ -157,13 +157,11 @@ func TestRotate_KeepRotating(t *testing.T) {
 	<-time.After(dt)
 	if !rotate.Check([]byte("test")) {
 		t.Error("error: \"test\" not present after 2 TTL")
-
 	}
 	ch <- time.Now()
 	<-time.After(dt)
 	if rotate.Check([]byte("test")) {
 		t.Error("error: \"test\" present after 3 TTL")
-
 	}
 
 	rotate2 := new(Bloomfilter)

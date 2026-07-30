@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/krakend/bloomfilter/v2"
-	"github.com/krakend/bloomfilter/v2/rotate"
-	"github.com/krakend/bloomfilter/v2/rpc"
-	gologging "github.com/krakend/krakend-gologging/v2"
-	"github.com/luraproject/lura/v2/config"
+	"github.com/krakend/bloomfilter/v3"
+	"github.com/krakend/bloomfilter/v3/rotate"
+	"github.com/krakend/bloomfilter/v3/rpc"
+	"github.com/luraproject/lura/v3/config"
+	"github.com/luraproject/lura/v3/logging"
 )
 
 func TestRegister_ok(t *testing.T) {
@@ -29,24 +29,13 @@ func TestRegister_ok(t *testing.T) {
 
 	serviceConf := config.ServiceConfig{
 		ExtraConfig: map[string]interface{}{
-			"github_com/devopsfaith/bloomfilter": cfgBloomFilter,
+			"auth/revoker": cfgBloomFilter,
 		},
-	}
-
-	logger, err := gologging.NewLogger(config.ExtraConfig{
-		gologging.Namespace: map[string]interface{}{
-			"level":  "DEBUG",
-			"stdout": true,
-		},
-	})
-	if err != nil {
-		t.Error(err.Error())
-		return
 	}
 
 	registered := false
 
-	if _, err := Register(ctx, "bloomfilter-test", serviceConf, logger, func(_ string, _ int) {
+	if _, err := Register(ctx, "bloomfilter-test", serviceConf, logging.NoOp, func(_ string, _ int) {
 		registered = true
 	}); err != nil {
 		t.Errorf("got error when registering: %s", err.Error())
@@ -77,21 +66,10 @@ func TestRegister_koNamespace(t *testing.T) {
 			"wrongnamespace": cfgBloomFilter,
 		},
 	}
-	logger, err := gologging.NewLogger(config.ExtraConfig{
-		gologging.Namespace: map[string]interface{}{
-			"level":  "DEBUG",
-			"stdout": true,
-		},
-	})
-	if err != nil {
-		t.Error(err.Error())
-		return
-	}
 
-	if _, err := Register(ctx, "bloomfilter-test", serviceConf, logger, func(_ string, _ int) {
+	if _, err := Register(ctx, "bloomfilter-test", serviceConf, logging.NoOp, func(_ string, _ int) {
 		t.Error("this error should never been called")
 	}); err != ErrNoConfig {
 		t.Errorf("didn't get error %s", ErrNoConfig)
 	}
-
 }
