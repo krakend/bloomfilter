@@ -3,8 +3,8 @@ package bitset
 import (
 	"testing"
 
-	"github.com/krakend/bloomfilter/v2"
-	"github.com/krakend/bloomfilter/v2/testutils"
+	"github.com/krakend/bloomfilter/v3"
+	"github.com/krakend/bloomfilter/v3/testutils"
 )
 
 func TestBitSet(t *testing.T) {

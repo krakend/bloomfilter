@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/krakend/bloomfilter/v2/rotate"
-	"github.com/krakend/bloomfilter/v2/testutils"
+	"github.com/krakend/bloomfilter/v3/rotate"
+	"github.com/krakend/bloomfilter/v3/testutils"
 )
 
 func TestBFAdd_ok(t *testing.T) {
@@ -89,7 +89,7 @@ func TestBFUnion_ok(t *testing.T) {
 		return
 	}
 
-	var bf2 = rotate.New(context.Background(), rotate.Config{Config: testutils.TestCfg, TTL: 5})
+	bf2 := rotate.New(context.Background(), rotate.Config{Config: testutils.TestCfg, TTL: 5})
 	bf2.Add([]byte("house"))
 
 	err = b.Union(UnionInput{bf2}, &unionOutput)
@@ -108,7 +108,7 @@ func TestBFUnion_ok(t *testing.T) {
 		return
 	}
 
-	var bf3 = rotate.New(context.Background(), rotate.Config{Config: testutils.TestCfg, TTL: 5})
+	bf3 := rotate.New(context.Background(), rotate.Config{Config: testutils.TestCfg, TTL: 5})
 	bf3.Add([]byte("mouse"))
 
 	b.Union(UnionInput{bf3}, &unionOutput)
@@ -157,11 +157,9 @@ func TestBFCheck_ko(t *testing.T) {
 func TestBFUnion_ko(t *testing.T) {
 	b := new(Bloomfilter)
 	bf = nil
-	var (
-		unionOutput UnionOutput
-	)
+	var unionOutput UnionOutput
 
-	var bf2 = rotate.New(context.Background(), rotate.Config{Config: testutils.TestCfg, TTL: 5})
+	bf2 := rotate.New(context.Background(), rotate.Config{Config: testutils.TestCfg, TTL: 5})
 	bf2.Add([]byte("house"))
 
 	err := b.Union(UnionInput{bf2}, &unionOutput)
