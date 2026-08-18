@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"net/rpc"
 
-	"github.com/krakend/bloomfilter/v2"
-	"github.com/krakend/bloomfilter/v2/rotate"
+	"github.com/krakend/bloomfilter/v3"
+	"github.com/krakend/bloomfilter/v3/rotate"
 )
 
 func Example_integration() {
@@ -59,7 +59,7 @@ func Example_integration() {
 		return
 	}
 
-	var bf2 = rotate.New(context.Background(), cfg)
+	bf2 := rotate.New(context.Background(), cfg)
 	bf2.Add([]byte("house"))
 
 	err = client.Call("BloomfilterRPC.Union", UnionInput{bf2}, &unionOutput)
@@ -80,7 +80,7 @@ func Example_integration() {
 		return
 	}
 
-	var bf3 = rotate.New(context.Background(), cfg)
+	bf3 := rotate.New(context.Background(), cfg)
 	bf3.Add([]byte("mouse"))
 
 	divCall = client.Go("BloomfilterRPC.Union", UnionInput{bf3}, &unionOutput, nil)

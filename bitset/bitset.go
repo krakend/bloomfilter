@@ -4,7 +4,7 @@
 package bitset
 
 import (
-	"github.com/krakend/bloomfilter/v2"
+	"github.com/krakend/bloomfilter/v3"
 	"github.com/tmthrgd/go-bitset"
 )
 
