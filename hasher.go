@@ -8,6 +8,7 @@ import (
 	"hash"
 	"hash/crc64"
 	"hash/fnv"
+	"sync"
 )
 
 type Hash func([]byte) []uint
@@ -34,11 +35,15 @@ var (
 
 	ErrImpossibleToTreat = fmt.Errorf("unable to union")
 
-	MD5    = HashWrapper(md5.New())  // skipcq: GO-S1023, GSC-G401
-	SHA1   = HashWrapper(sha1.New()) // skipcq: GO-S1025, GSC-G401
-	CRC64  = HashWrapper(crc64.New(crc64.MakeTable(crc64.ECMA)))
-	FNV64  = HashWrapper(fnv.New64())
-	FNV128 = HashWrapper(fnv.New128())
+	crc64Table = crc64.MakeTable(crc64.ECMA)
+
+	// Each call gets its own hash.Hash, so these are safe for concurrent use:
+	// filters share them and are read concurrently.
+	MD5    = newHasher(md5.New)  // skipcq: GO-S1023, GSC-G401
+	SHA1   = newHasher(sha1.New) // skipcq: GO-S1025, GSC-G401
+	CRC64  = newHasher(func() hash.Hash { return crc64.New(crc64Table) })
+	FNV64  = newHasher(func() hash.Hash { return fnv.New64() })
+	FNV128 = newHasher(func() hash.Hash { return fnv.New128() })
 )
 
 func DefaultHashFactory(k uint) []Hash {
@@ -62,15 +67,30 @@ func OptimalHashFactory(k uint) []Hash {
 	}
 }
 
+// HashWrapper turns h into a Hash. h is reused across calls, so calls are
+// serialized to keep the returned Hash safe for concurrent use.
 func HashWrapper(h hash.Hash) Hash {
+	var mu sync.Mutex
 	return func(elem []byte) []uint {
+		mu.Lock()
+		defer mu.Unlock()
 		h.Reset()
-		h.Write(elem)
-		result := h.Sum(nil)
-		out := make([]uint, len(result)/8)
-		for i := 0; i < len(result)/8; i++ {
-			out[i] = uint(binary.LittleEndian.Uint64(result[i*8 : (i+1)*8]))
-		}
-		return out
+		return sum(h, elem)
 	}
+}
+
+func newHasher(newHash func() hash.Hash) Hash {
+	return func(elem []byte) []uint {
+		return sum(newHash(), elem)
+	}
+}
+
+func sum(h hash.Hash, elem []byte) []uint {
+	h.Write(elem)
+	result := h.Sum(nil)
+	out := make([]uint, len(result)/8)
+	for i := 0; i < len(result)/8; i++ {
+		out[i] = uint(binary.LittleEndian.Uint64(result[i*8 : (i+1)*8]))
+	}
+	return out
 }
