@@ -83,9 +83,9 @@ func TestHashersConcurrentUse(t *testing.T) {
 // so the package hashers must keep producing exactly the same values.
 func TestHashersMatchHashWrapper(t *testing.T) {
 	wrapped := map[string][2]Hash{
-		"md5":    {MD5, HashWrapper(md5.New())},
+		"md5":    {MD5, HashWrapper(md5.New())}, // skipcq: GO-S1023, GSC-G401
 		"crc64":  {CRC64, HashWrapper(crc64.New(crc64.MakeTable(crc64.ECMA)))},
-		"sha1":   {SHA1, HashWrapper(sha1.New())},
+		"sha1":   {SHA1, HashWrapper(sha1.New())}, // skipcq: GO-S1025, GSC-G401
 		"fnv64":  {FNV64, HashWrapper(fnv.New64())},
 		"fnv128": {FNV128, HashWrapper(fnv.New128())},
 	}
@@ -98,6 +98,7 @@ func TestHashersMatchHashWrapper(t *testing.T) {
 	}
 }
 
+// HashWrapper reuses the hash.Hash it is given, so it must serialize calls.
 func TestHashWrapperConcurrentUse(t *testing.T) {
 	hash := HashWrapper(fnv.New128())
 	in := []byte("shared hash.Hash instance")
@@ -123,6 +124,8 @@ func TestHashWrapperConcurrentUse(t *testing.T) {
 	}
 }
 
+// BenchmarkOptimalHashFactoryParallel measures the optimal hasher when many
+// goroutines check a filter at once, as a gateway does.
 func BenchmarkOptimalHashFactoryParallel(b *testing.B) {
 	hash := OptimalHashFactory(23)[0]
 	in := []byte("jti-0198f0c2-1a3b-7c4d-8e5f-000000000001")

@@ -42,8 +42,8 @@ var (
 	MD5    = newHasher(md5.New)  // skipcq: GO-S1023, GSC-G401
 	SHA1   = newHasher(sha1.New) // skipcq: GO-S1025, GSC-G401
 	CRC64  = newHasher(func() hash.Hash { return crc64.New(crc64Table) })
-	FNV64  = newHasher(func() hash.Hash { return fnv.New64() })
-	FNV128 = newHasher(func() hash.Hash { return fnv.New128() })
+	FNV64  = newHasher(fnv.New64)
+	FNV128 = newHasher(fnv.New128)
 )
 
 func DefaultHashFactory(k uint) []Hash {
@@ -79,12 +79,16 @@ func HashWrapper(h hash.Hash) Hash {
 	}
 }
 
-func newHasher(newHash func() hash.Hash) Hash {
+// newHasher returns a Hash that builds a new hash.Hash with newHash on every
+// call. Nothing is shared between calls, so it is safe for concurrent use.
+func newHasher[H hash.Hash](newHash func() H) Hash {
 	return func(elem []byte) []uint {
 		return sum(newHash(), elem)
 	}
 }
 
+// sum writes elem to h, which must be freshly created or reset, and returns
+// the digest as little-endian 64-bit words.
 func sum(h hash.Hash, elem []byte) []uint {
 	h.Write(elem)
 	result := h.Sum(nil)
